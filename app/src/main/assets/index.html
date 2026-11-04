@@ -53,6 +53,7 @@ h2{font:700 1.25rem/1.3 var(--f-display);color:var(--teal);margin:0 0 .3rem;text
 .opts label{max-width:100%}
 .opts select{max-width:100%;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:.25rem .4rem}
 .hint{font-size:.82rem;color:var(--muted);margin:.4rem 0 0}
+.lit{margin:.5rem 0}.litl{display:block}.litl small{color:var(--muted)}
 .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.7rem 0}
 .chip{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:.2rem .7rem;font-size:.85rem}
 .chip:hover{border-color:var(--accent)}
@@ -175,12 +176,11 @@ footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--line);font-si
   <section id="v-suchen">
     <h2>In allen Werken suchen</h2>
     <p class="lead">Geben Sie ein Wort in heutiger Schreibweise ein. Die Suche findet auch die alten Formen, zum Beispiel „Arznei“ und „Arzney“ oder „Teil“ und „Theil“.</p>
-    <div class="searchbox"><input id="q" type="search" placeholder="Suchwort, z. B. Lebenskraft" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Suchbegriff"></div>
+    <div class="searchbox"><input id="q" type="search" enterkeyhint="search" placeholder="Suchwort, z. B. Lebenskraft" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Suchbegriff"></div>
     <div class="opts">
       <label><input type="checkbox" id="equiv" checked> Alte und neue Schreibweise gleichsetzen</label>
-      <label><input type="checkbox" id="syn" checked> Arzneinamen und Abkürzungen erkennen</label>
-      <label>Autor / Werk
-        <select id="scope"><option value="all">Alle Autoren</option><option value="hah">Hahnemann (beide Werke)</option><option value="org">Hahnemann: Organon der Heilkunst</option><option value="chr">Hahnemann: Die chronischen Krankheiten</option><option value="arz">Hahnemann: nur Arzneimittel (Bd. 2–5)</option><option value="bo">Boericke: Materia medica</option><option value="bog">Boger (englisch, Original)</option><option value="bgd">Boger (deutsch, Übersetzung)</option><option value="clk">Clarke: Beschwerden-Verzeichnis (Klinik)</option></select></label>
+      <div class="lit"><span class="litl">Literatur <small>(Mehrfachauswahl, ohne Auswahl alle)</small></span>
+        <div class="chips" id="scope" role="group" aria-label="Literatur"></div></div>
       <label>Bereich bei Boericke
         <select id="region"><option value="">Alle Abschnitte</option></select></label>
       <label>Reihenfolge
@@ -195,7 +195,7 @@ footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--line);font-si
     <h2>Arzneien nachlesen</h2>
     <p class="lead">Wählen Sie einen Autor und lesen Sie seine Arzneien der Reihe nach oder suchen Sie eine Arznei, auch mit Abkürzung wie „lyc“.</p>
     <div class="chips" id="aAut" role="group" aria-label="Autor"></div>
-    <div class="searchbox"><input id="aq" type="search" placeholder="Arznei filtern, z. B. puls" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Arznei filtern"></div>
+    <div class="searchbox"><input id="aq" type="search" enterkeyhint="search" placeholder="Arznei filtern, z. B. puls" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Arznei filtern"></div>
     <div id="aList"></div>
     <div id="aRead" hidden></div>
   </section>
@@ -203,7 +203,7 @@ footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--line);font-si
   <section id="v-klinik" hidden>
     <h2>Beschwerde oder Arznei nachschlagen</h2>
     <p class="lead">Geben Sie eine Beschwerde ein, zum Beispiel „Asthma“, und Sie sehen alle Arzneien, bei denen Clarke sie nennt. Geben Sie eine Arznei ein, auch als Abkürzung wie „lyc“, und Sie sehen ihre Beschwerden.</p>
-    <div class="searchbox"><input id="kq" type="search" placeholder="Beschwerde oder Arznei" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Beschwerde oder Arznei"></div>
+    <div class="searchbox"><input id="kq" type="search" enterkeyhint="search" placeholder="Beschwerde oder Arznei" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Beschwerde oder Arznei"></div>
     <div class="chips" id="kex"></div>
     <div id="kres" aria-live="polite"></div>
   </section>
@@ -244,11 +244,11 @@ footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--line);font-si
       </tbody></table></div>
     <h2>Arzneinamen und Abkürzungen</h2>
     <p class="lead">Diese Namen gelten bei der Suche als gleichbedeutend, zum Beispiel „lyc“ für Lycopodium oder „puls“ für Pulsatilla. Das erste Wort jeder Zeile ist der Hauptname.</p>
-    <div class="searchbox"><input id="sq" type="search" placeholder="Arznei oder Abkürzung filtern" autocomplete="off" aria-label="Arzneinamen filtern"></div>
+    <div class="searchbox"><input id="sq" type="search" enterkeyhint="search" placeholder="Arznei oder Abkürzung filtern" autocomplete="off" aria-label="Arzneinamen filtern"></div>
     <div id="synList"></div>
     <h2 style="margin-top:2rem">Schreibweisen im Text</h2>
     <p class="lead">Wörter, die in diesem Text in mehr als einer Schreibweise vorkommen, nach Häufigkeit. Ein Klick startet die Suche.</p>
-    <div class="searchbox"><input id="vq" type="search" placeholder="Liste filtern" autocomplete="off" aria-label="Schreibweisen filtern"></div>
+    <div class="searchbox"><input id="vq" type="search" enterkeyhint="search" placeholder="Liste filtern" autocomplete="off" aria-label="Schreibweisen filtern"></div>
     <div id="varList"></div>
   </section>
 
@@ -440,7 +440,7 @@ function matchSynPhrase(toks,words){
 
 var VIEWS=["suchen","arz","klinik","lesen","merkliste","schreibweisen"];
 var CH=120;
-var S={q:"Arznei",equiv:true,syn:true,region:"",expanded:"",scope:"all",sort:"hits",variant:null,shown:30,hl:false,
+var S={q:"Arznei",equiv:true,syn:true,region:"",expanded:"",scope:[],sort:"hits",variant:null,shown:30,hl:false,
   cur:lsGet("hn.cur",{w:0,s:3}),chunk:0,focus:0,fs:lsGet("hn.fs",1),bm:lsGet("hn.bm",[]),terms:[],results:null,variantList:[],any:null};
 if(!WORKS[S.cur.w]||!WORKS[S.cur.w].sections[S.cur.s]){S.cur={w:0,s:3}}
 
@@ -509,14 +509,17 @@ function regionMask(){
   RM[S.region]=r;return r;
 }
 function inScope(sec){
-  if(S.scope==="hah")return sec.w<2;
-  if(S.scope==="org")return sec.w===0;
-  if(S.scope==="chr")return sec.w===1;
-  if(S.scope==="bo")return sec.w===2;
-  if(S.scope==="bog")return sec.w===3;
-  if(S.scope==="bgd")return sec.w===4;
-  if(S.scope==="arz")return sec.k==="arz";
-  return true;
+  if(!S.scope.length)return true;
+  return S.scope.some(function(c){
+    if(c==="org")return sec.w===0;
+    if(c==="chr")return sec.w===1;
+    if(c==="bo")return sec.w===2;
+    if(c==="bog")return sec.w===3;
+    if(c==="bgd")return sec.w===4;
+    if(c==="arz")return sec.k==="arz";
+    return false;
+  });
+
 }
 function run(){
   var terms=parseQuery(S.q);S.terms=terms;S.any=null;S.variantList=[];
@@ -820,6 +823,21 @@ function boSec(r,wi){
   if(wi===3&&r.nn.length===1)for(i=0;i<secs.length;i++){if(!secs[i].m&&wordsOf(secs[i].label)[0]===r.nn[0])return secs[i]}
   return null;
 }
+/* Rangfolge der Arzneinamen: Hauptmittel zuerst, dann Mittel mit dem Begriff am Namensanfang, dann übrige */
+function nameRankFn(raw,fg){
+  var nq=raw.map(norm).join(" "),full={},firstW={};
+  full[nq]=1;firstW[raw.length?norm(raw[0]):""]=1;
+  (fg.groups||[]).forEach(function(gi){SYNG[gi].forEach(function(e){full[e.words.join(" ")]=1;if(e.words.length===1)firstW[e.words[0]]=1})});
+  return function(nn){
+    var j=nn.join(" "),f0=nn[0]||"",k;
+    if(full[j])return 0;
+    if(firstW[f0])return 1;
+    for(k in firstW)if(k.length>=4&&f0.indexOf(k)===0)return 2;
+    if(f0.indexOf(raw.length?norm(raw[0]):"#")===0)return 2;
+    for(var i=1;i<nn.length;i++){if(firstW[nn[i]])return 3;for(k in firstW)if(k.length>=4&&nn[i].indexOf(k)===0)return 3}
+    return 4;
+  };
+}
 function kMark(t,terms){
   var re=new RegExp(WORD,"g"),out="",pos=0,m;
   while((m=re.exec(t))){
@@ -841,6 +859,7 @@ function kSearch(){
   var terms=raw.map(norm),html="";
   /* Arzneien nach Namen */
   var fg=findGroups(raw),names=CL.filter(function(r){return kName(r,raw,fg)});
+  var rk=nameRankFn(raw,fg);names=names.map(function(r,i){return {r:r,k:rk(r.nn),i:i}}).sort(function(a,b){return a.k-b.k||a.i-b.i}).map(function(x){return x.r});
   if(names.length){
     html+='<p class="sum">'+(names.length===1?"Arznei":names.length+" Arzneien")+' <span>mit „'+esc(q)+'“ im Namen</span></p>';
     names.slice(0,6).forEach(function(r){
@@ -905,16 +924,28 @@ function findSection(txt){
 }
 
 /* Ereignisse */
+document.addEventListener("keydown",function(e){
+  if(e.key==="Enter"&&e.target&&e.target.tagName==="INPUT"&&e.target.type==="search"){e.preventDefault();e.target.blur()}
+});
 $("#tabs").addEventListener("click",function(e){var b=e.target.closest("button");if(b){location.hash=b.dataset.v;window.scrollTo(0,0)}});
 window.addEventListener("hashchange",function(){show(hashView())});
 $("#q").addEventListener("input",function(e){S.q=e.target.value;S.variant=null;clearTimeout(timer);timer=setTimeout(doSearch,160)});
 ["Kopf","Geist, Gemüt","Augen","Ohren","Nase","Gesicht","Mund","Zunge","Innerer Hals","Magen","Abdomen","Rektum","Stuhlgang","Urin","Harnwege","Männl. Gen","Weibl. Gen.","Atemwege","Brust","Herz","Rücken","Extremitäten","Haut","Schlaf","Fieber","Appetit","Modalitäten","Antidot","Vergleichen","Ergänzung","Dosierung"].forEach(function(x){var o=document.createElement("option");o.value=x;o.textContent=x;$("#region").appendChild(o)});
 $("#region").addEventListener("change",function(e){S.region=e.target.value;doSearch()});
-$("#syn").addEventListener("change",function(e){S.syn=e.target.checked;S.variant=null;doSearch()});
 $("#equiv").addEventListener("change",function(e){S.equiv=e.target.checked;S.variant=null;doSearch()});
-$("#scope").addEventListener("change",function(e){
-  if(e.target.value==="clk"){e.target.value=S.scope;KS.q=$("#q").value.trim();$("#kq").value=KS.q;KS.shown=40;location.hash="klinik";window.scrollTo(0,0);return}
-  S.scope=e.target.value;doSearch()});
+var LIT=[["org","Hahnemann: Organon"],["chr","Hahnemann: Chron. Krankheiten"],["arz","Hahnemann: nur Arzneien (Bd. 2–5)"],["bo","Boericke"],["bog","Boger (englisch)"],["bgd","Boger (deutsch)"]];
+function renderLit(){
+  $("#scope").innerHTML='<button class="chip" data-lit="" aria-pressed="'+(S.scope.length===0)+'">Alle</button>'+
+    LIT.map(function(l){return '<button class="chip" data-lit="'+l[0]+'" aria-pressed="'+(S.scope.indexOf(l[0])>-1)+'">'+esc(l[1])+'</button>'}).join("")+
+    '<button class="chip" data-lit="clk">Clarke: Klinik ›</button>';
+}
+renderLit();
+$("#scope").addEventListener("click",function(e){
+  var b=e.target.closest("[data-lit]");if(!b)return;var v=b.dataset.lit;
+  if(v==="clk"){KS.q=$("#q").value.trim();$("#kq").value=KS.q;KS.shown=40;location.hash="klinik";window.scrollTo(0,0);return}
+  if(v==="")S.scope=[];
+  else{var k=S.scope.indexOf(v);if(k>-1)S.scope.splice(k,1);else S.scope.push(v)}
+  renderLit();doSearch()});
 $("#sort").addEventListener("change",function(e){S.sort=e.target.value;doSearch()});
 $("#variants").addEventListener("click",function(e){var b=e.target.closest("[data-var]");if(!b)return;S.variant=S.variant===b.dataset.var?null:b.dataset.var;doSearch()});
 $("#results").addEventListener("click",function(e){
@@ -1005,11 +1036,14 @@ function renderArz(){
       return it.nn.some(function(w){return w.indexOf(nq)===0})||(nq.length>=4&&it.nn.join(" ").indexOf(nq)>-1)||kName(it,raw,fg);
     });
   }
-  items.sort(function(a,b){return a.n.localeCompare(b.n,"de")});
+  var rkF=null;
+  if(q){var rw2=(q.match(new RegExp(WORD,"g"))||[]);rkF=nameRankFn(rw2,findGroups(rw2))}
+  items.forEach(function(it){it.rk=rkF?rkF(it.nn):0});
+  items.sort(function(a,b){return a.rk-b.rk||a.n.localeCompare(b.n,"de")});
   var html="",lastL="";
   items.forEach(function(it,ix){
     var L=norm(it.n).charAt(0).toUpperCase();
-    if(L!==lastL){lastL=L;html+='<h3 class="aL">'+esc(L)+'</h3>'}
+    if(!q&&L!==lastL){lastL=L;html+='<h3 class="aL">'+esc(L)+'</h3>'}
     html+='<button class="hit arzbtn" data-ix="'+ix+'"><b>'+esc(it.n)+'</b>'+(it.c?' <small>'+it.c+'</small>':'')+'</button>';
   });
   AA.items=items;

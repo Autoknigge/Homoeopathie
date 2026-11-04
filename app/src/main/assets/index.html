@@ -445,7 +445,33 @@ var S={q:"Arznei",equiv:true,syn:true,region:"",expanded:"",scope:"all",sort:"hi
 if(!WORKS[S.cur.w]||!WORKS[S.cur.w].sections[S.cur.s]){S.cur={w:0,s:3}}
 
 function key(t){return S.equiv?VN[t.id]:VL[t.id]}
+/* Abkürzungen der Arzneien: Punkte, Bindestriche und Leerzeichen spielen keine Rolle (Nat-m. = Nat.-m. = Nat-m = nat m) */
+var ABBR=null;
+function abbrSet(){
+  if(ABBR)return ABBR;ABBR=new Set();
+  SYNG.forEach(function(g){g.forEach(function(e){if(/^[A-Za-z\u00C0-\u00FF]+(-[A-Za-z\u00C0-\u00FF]+)+$/.test(e.raw)&&e.raw.length<=14)ABBR.add(e.words.join(""))})});
+  return ABBR;
+}
+function fixAbbr(q){
+  var parts=q.split(/("[^"]*")/);
+  return parts.map(function(seg,si){
+    if(si%2===1)return seg;
+    seg=seg.replace(/([A-Za-z\u00C0-\u00FF])\.(?=[\s\-.]|$)/g,"$1").replace(/([A-Za-z\u00C0-\u00FF])\.(?=[A-Za-z\u00C0-\u00FF])/g,"$1 ").replace(/\.+/g,"");
+    var tk=seg.split(/\s+/).filter(Boolean),out=[],i=0,AB=abbrSet();
+    while(i<tk.length){
+      var done=false;
+      for(var n=3;n>=2&&!done;n--){
+        if(i+n>tk.length)continue;
+        var sl=tk.slice(i,i+n),key=norm(sl.join("").replace(/[^A-Za-z\u00C0-\u00FF]/g,""));
+        if(AB.has(key)){out.push(sl.map(function(x){return x.replace(/^-+|-+$/g,"")}).join("-"));i+=n;done=true}
+      }
+      if(!done){out.push(tk[i].replace(/^-+|-+$/g,"")||tk[i]);i++}
+    }
+    return out.join(" ")+(/\s$/.test(seg)&&si<parts.length-1?" ":"");
+  }).join("");
+}
 function parseQuery(q){
+  q=fixAbbr(q);
   var terms=[],re=/"([^"]+)"|(\S+)/g,m;
   while((m=re.exec(q))){
     var raw=m[1]||m[2],rw=(raw.match(new RegExp(WORD,"g"))||[]).filter(function(w){return norm(w).length>=2}),

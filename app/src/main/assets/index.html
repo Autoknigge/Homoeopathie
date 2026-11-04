@@ -44,6 +44,7 @@ nav .count{font-size:.72rem;margin-left:.25rem;color:var(--gold)}
 header :focus-visible{outline-color:var(--gold)}
 header{transition:transform .22s ease}
 header.hide{transform:translateY(-110%)}
+details.tocw{border-bottom:1px solid var(--line);padding:.15rem 0}details.tocw>summary{cursor:pointer;padding:.6rem 0;color:var(--teal);font-size:1.02rem;list-style-position:inside}details.tocw[open]>summary{margin-bottom:.4rem}
 main{padding-block:1.4rem 4rem}
 h2{font:700 1.25rem/1.3 var(--f-display);color:var(--teal);margin:0 0 .3rem;text-wrap:balance}
 .lead{color:var(--muted);margin:0 0 1rem;max-width:62ch}
@@ -738,10 +739,11 @@ function doSearch(){S.shown=30;run();renderResults()}
 /* Lesen */
 function boPair(sec){var o=WORKS[sec.w===3?4:3].sections;for(var i=0;i<o.length;i++)if(o[i].key===sec.key)return i;return -1}
 function curSec(){return WORKS[S.cur.w].sections[S.cur.s]}
+var TOCOPEN={};
 function buildToc(){
   var h="";
   WORKS.forEach(function(w,wi){
-    h+='<h3>'+esc(w.title)+'</h3>';
+    h+='<details class="tocw" data-tw="'+wi+'"'+(TOCOPEN[wi]?' open':'')+'><summary><b>'+esc(w.title)+'</b> <small>('+w.sections.length+')</small></summary>';
     var groups=[],map={};
     w.sections.forEach(function(s){var g=(w.id==="org"&&s.group==="Paragraphen")?"Paragraphen":s.group;if(!map[g]){map[g]=[];groups.push(g)}map[g].push(s)});
     if(wi===2)groups.sort();
@@ -753,10 +755,12 @@ function buildToc(){
         h+=(wi>0?'<p class="hint" style="margin:.1rem 0 .3rem">'+esc(g)+'</p>':"")+'<div class="wide">'+list.map(function(s){return '<button data-w="'+wi+'" data-s="'+s.i+'">'+esc(wi>0?s.short:s.label)+'</button>'}).join("")+'</div>';
       }
     });
+    h+='</details>';
   });
   var rest=LIB.filter(function(l){return workIdx(l.id)<0});
-  if(rest.length)h+='<h3>Weitere Werke</h3><p class="hint" style="margin:.1rem 0 .3rem">Zum Laden antippen (einmalig, ca. Größe in MB).</p><div class="wide">'+rest.map(function(l){return '<button data-lib="'+l.id+'">'+esc(l.short)+' ('+l.mb+' MB)</button>'}).join("")+'</div>';
+  if(rest.length)h+='<p class="hint" style="margin:.8rem 0 .3rem">Weitere Werke – zum Laden antippen (einmalig):</p><div class="wide">'+rest.map(function(l){return '<button data-lib="'+l.id+'">'+esc(l.short)+' ('+l.mb+' MB)</button>'}).join("")+'</div>';
   $("#toc").innerHTML=h;
+  Array.prototype.forEach.call($("#toc").querySelectorAll("details.tocw"),function(d){d.addEventListener("toggle",function(){TOCOPEN[d.dataset.tw]=d.open})});
   var dl=SECS.map(function(s){return '<option value="'+esc(s.w>=1?s.short:s.label)+'"></option>'}).join("");
   $("#jumplist").innerHTML=dl;
 }

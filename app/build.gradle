@@ -25,10 +25,12 @@ android {
             // Google-Testanzeigen im Debug-Build (keine echten Impressionen)
             buildConfigField 'String', 'APP_OPEN_ID', '"ca-app-pub-3940256099942544/9257395921"'
             buildConfigField 'String', 'INTERSTITIAL_ID', '"ca-app-pub-3940256099942544/1033173712"'
+            buildConfigField 'String', 'BANNER_ID', '"ca-app-pub-3940256099942544/9214589741"'
         }
         release {
             buildConfigField 'String', 'APP_OPEN_ID', '"ca-app-pub-7178658520690671/5122637538"'
             buildConfigField 'String', 'INTERSTITIAL_ID', '"ca-app-pub-7178658520690671/9337214716"'
+            buildConfigField 'String', 'BANNER_ID', '"ca-app-pub-7178658520690671/7229926122"'
             minifyEnabled false
             if (System.getenv('KEYSTORE_FILE')) signingConfig signingConfigs.release
         }

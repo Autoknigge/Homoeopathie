@@ -27,6 +27,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends Activity {
     private WebView web;
+    private android.widget.FrameLayout bannerBox;
+    private com.google.android.gms.ads.AdView bannerView;
     private final AtomicBoolean adsStarted = new AtomicBoolean(false);
     private final long startTime = System.currentTimeMillis();
     private boolean appOpenShown = false;
@@ -121,8 +123,19 @@ public class MainActivity extends Activity {
     private void initAds() {
         if (!adsStarted.compareAndSet(false, true)) return;
         MobileAds.initialize(this, status -> {
-            runOnUiThread(() -> { loadAppOpen(); loadInterstitial(); });
+            runOnUiThread(() -> { loadAppOpen(); loadInterstitial(); loadBanner(); });
         });
+    }
+
+    private void loadBanner() {
+        if (bannerView != null) return;
+        bannerView = new com.google.android.gms.ads.AdView(this);
+        bannerView.setAdUnitId(BuildConfig.BANNER_ID);
+        android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
+        int wDp = (int) (dm.widthPixels / dm.density);
+        bannerView.setAdSize(com.google.android.gms.ads.AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, wDp));
+        bannerBox.addView(bannerView, new android.widget.FrameLayout.LayoutParams(-1, -2, android.view.Gravity.CENTER_HORIZONTAL));
+        bannerView.loadAd(new AdRequest.Builder().build());
     }
 
     private void loadAppOpen() {

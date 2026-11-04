@@ -1,0 +1,44 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'de.autoknigge.hahnemannco'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'de.autoknigge.hahnemannco'
+        minSdk 24
+        targetSdk 35
+        versionCode 1
+        versionName '1.0'
+    }
+    signingConfigs {
+        release {
+            def ks = System.getenv('KEYSTORE_FILE')
+            if (ks) {
+                storeFile file(ks)
+                storePassword System.getenv('KEYSTORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            // Google-Testanzeigen im Debug-Build (keine echten Impressionen)
+            buildConfigField 'String', 'APP_OPEN_ID', '"ca-app-pub-3940256099942544/9257395921"'
+            buildConfigField 'String', 'INTERSTITIAL_ID', '"ca-app-pub-3940256099942544/1033173712"'
+        }
+        release {
+            buildConfigField 'String', 'APP_OPEN_ID', '"ca-app-pub-7178658520690671/5122637538"'
+            buildConfigField 'String', 'INTERSTITIAL_ID', '"ca-app-pub-7178658520690671/9337214716"'
+            minifyEnabled false
+            if (System.getenv('KEYSTORE_FILE')) signingConfig signingConfigs.release
+        }
+    }
+    buildFeatures { buildConfig true }
+    androidResources { noCompress 'html' }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
+
+dependencies {
+    implementation 'com.google.android.gms:play-services-ads:23.6.0'
+    implementation 'com.google.android.ump:user-messaging-platform:3.1.0'
+}

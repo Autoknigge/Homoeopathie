@@ -1,4 +1,4 @@
-# Hahnemann & Co
+# Homöopathie Nachschlagewerk
 Offline-Nachschlagewerk (WebView). Inhalt: app/src/main/assets/index.html
 Paket: de.autoknigge.hahnemannco
 

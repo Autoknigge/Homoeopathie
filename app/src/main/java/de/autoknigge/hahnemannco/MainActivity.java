@@ -42,7 +42,30 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle b) {
         super.onCreate(b);
         web = new WebView(this);
-        setContentView(web);
+        final android.widget.LinearLayout root = new android.widget.LinearLayout(this);
+        root.setOrientation(android.widget.LinearLayout.VERTICAL);
+        root.setBackgroundColor(0xFF0B2412);
+        root.addView(web, new android.widget.LinearLayout.LayoutParams(-1, 0, 1f));
+        bannerBox = new android.widget.FrameLayout(this);
+        bannerBox.setBackgroundColor(0xFF0B2412);
+        root.addView(bannerBox, new android.widget.LinearLayout.LayoutParams(-1, -2));
+        setContentView(root);
+        // Ab Android 15 zeichnet die App unter Status- und Navigationsleiste: Abstand selbst setzen
+        root.setOnApplyWindowInsetsListener(new android.view.View.OnApplyWindowInsetsListener() {
+            @Override public android.view.WindowInsets onApplyWindowInsets(android.view.View v, android.view.WindowInsets in) {
+                int l, t, r, bt;
+                if (android.os.Build.VERSION.SDK_INT >= 30) {
+                    android.graphics.Insets i = in.getInsets(android.view.WindowInsets.Type.systemBars()
+                        | android.view.WindowInsets.Type.displayCutout() | android.view.WindowInsets.Type.ime());
+                    l = i.left; t = i.top; r = i.right; bt = i.bottom;
+                } else {
+                    l = in.getSystemWindowInsetLeft(); t = in.getSystemWindowInsetTop();
+                    r = in.getSystemWindowInsetRight(); bt = in.getSystemWindowInsetBottom();
+                }
+                v.setPadding(l, t, r, bt);
+                return in;
+            }
+        });
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);

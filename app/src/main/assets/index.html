@@ -161,8 +161,20 @@ footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--line);font-si
 .klink{margin-top:.5rem}
 .lbl{color:var(--teal)}
 .text p.meta{font-size:.9em;color:var(--muted);font-style:italic}
+
+/* Markierungen und Auszüge */
+mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor:pointer}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) mark.hlu{background:#8a6c14;color:#fff7dc}}
+:root[data-theme="dark"] mark.hlu{background:#8a6c14;color:#fff7dc}
+.selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:30;display:flex;gap:.25rem;background:var(--hd1);border:1px solid var(--gold2);border-radius:999px;padding:.3rem;box-shadow:0 4px 18px rgba(0,0,0,.4)}
+.selbar[hidden]{display:none}
+.selbar button{font:600 .95rem var(--f-ui,system-ui);color:var(--gold);background:transparent;border:0;border-radius:999px;padding:.55rem .95rem;min-height:44px}
+.selbar button:active{background:rgba(255,255,255,.12)}
+.extools{display:flex;flex-wrap:wrap;gap:.5rem;margin:.2rem 0 1rem}
+.exbtn{display:flex;gap:.5rem}
 </style>
 
+<div id="selbar" class="selbar" hidden data-g=""><button id="sbMark">Markieren</button><button id="sbCopy">Kopieren</button><button id="sbShare">Teilen</button><button id="sbDel" hidden>Markierung entfernen</button></div>
 <div id="libStatus" class="libstatus" hidden></div>
 <header>
   <div class="wrap">
@@ -233,6 +245,10 @@ footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--line);font-si
     <h2>Merkliste</h2>
     <p class="lead">Abschnitte, die Sie mit dem Stern markiert haben. Die Liste bleibt in diesem Browser gespeichert.</p>
     <div class="list" id="bmList"></div>
+    <h2 style="margin-top:2rem">Meine Auszüge</h2>
+    <p class="lead">Markierte Textstellen mit Quellenangabe. Zum Markieren im Lesen einen Text mit dem Finger auswählen und auf „Markieren“ tippen.</p>
+    <p id="exTools" class="extools" hidden><button class="btn" id="exShareAll">Alle teilen</button> <button class="btn" id="exCopyAll">Alle kopieren</button> <button class="btn" id="exFile">Als Textdatei speichern</button></p>
+    <div class="list" id="exList"></div>
   </section>
 
   <section id="v-schreibweisen" hidden>
@@ -761,7 +777,10 @@ function renderReader(){
     var p=sec.paras[i];
     if(sec.w===1&&p.g&&p.g!==lastG&&!p.h){html+='<div class="pgm">Band '+sec.vol+' · Seite '+p.g+'</div>'}
     if(p.g)lastG=p.g;
-    var inner=(hlOn&&S.any[sec.g0+i])?renderPara(p,paraMarks(p),false):esc(p.t);
+    var uh=p.h?null:hlRanges(sec,i),inner;
+    if(uh&&uh.length)inner=hlHtml(p.t,uh);
+    else inner=(hlOn&&S.any[sec.g0+i])?renderPara(p,paraMarks(p),false):esc(p.t);
+    if(!p.h)inner='<span class="pt">'+inner+'</span>';
     if(p.h)html+='<h3 class="sub" id="p'+i+'">'+inner+'</h3>';
     else{
       var cls=p.c?"ctr":p.q?"quote":p.f?"fnp":p.m?"meta":"";
@@ -803,6 +822,108 @@ function nextHit(){
   var sec=curSec(),hp=hitParas(sec);if(!hp.length)return;
   var nx=hp.filter(function(i){return i>S.focus})[0];
   gotoPara(nx===undefined?hp[0]:nx);
+}
+
+
+/* Markierungen und Auszüge */
+var HL=lsGet("hn.hl",[]);
+function hlSave(){lsSet("hn.hl",HL)}
+function hlRanges(sec,pi){
+  var k=bmKey(sec),r=HL.filter(function(x){return x.k===k&&x.p===pi});
+  return r.length?r:null;
+}
+function hlHtml(t,rs){
+  var a=rs.slice().sort(function(x,y){return x.a-y.a}),out="",pos=0;
+  a.forEach(function(r){
+    var st=Math.max(r.a,pos),en=Math.min(r.b,t.length);
+    if(en<=st)return;
+    out+=esc(t.slice(pos,st))+'<mark class="hlu" data-hg="'+r.g+'">'+esc(t.slice(st,en))+'</mark>';pos=en;
+  });
+  return out+esc(t.slice(pos));
+}
+var SELP=null,selTimer=null;
+function selInfo(){
+  var sel=window.getSelection();
+  if(!sel||sel.isCollapsed||!sel.rangeCount)return null;
+  var rg=sel.getRangeAt(0),rd=document.getElementById("reader");
+  if(!rd||!rd.contains(rg.commonAncestorContainer))return null;
+  var sec=curSec(),items=[];
+  rd.querySelectorAll(".pt").forEach(function(pt){
+    if(!rg.intersectsNode(pt))return;
+    var p=pt.parentNode,pi=+p.id.slice(1),total=sec.paras[pi].t.length,a=0,b=total,pr;
+    if(pt.contains(rg.startContainer)){pr=document.createRange();pr.setStart(pt,0);pr.setEnd(rg.startContainer,rg.startOffset);a=pr.toString().length}
+    if(pt.contains(rg.endContainer)){pr=document.createRange();pr.setStart(pt,0);pr.setEnd(rg.endContainer,rg.endOffset);b=pr.toString().length}
+    b=Math.min(b,total);
+    var txt=sec.paras[pi].t.slice(a,b);
+    if(b-a>0&&txt.trim())items.push({p:pi,a:a,b:b,t:txt});
+  });
+  return items.length?items:null;
+}
+function showSelBar(mode,g){
+  var bar=document.getElementById("selbar");
+  document.getElementById("sbMark").hidden=mode!=="sel";
+  document.getElementById("sbCopy").hidden=mode!=="sel";
+  document.getElementById("sbShare").hidden=false;
+  document.getElementById("sbDel").hidden=mode!=="del";
+  bar.dataset.g=g||"";bar.hidden=false;
+}
+function hideSelBar(){document.getElementById("selbar").hidden=true}
+document.addEventListener("selectionchange",function(){
+  clearTimeout(selTimer);
+  var it=selInfo();
+  if(it){SELP=it;showSelBar("sel")}
+  else selTimer=setTimeout(function(){if(document.getElementById("selbar").dataset.g==="")hideSelBar()},700);
+});
+function srcOf(sec){return secCap(sec)+", "+secName(sec)}
+function groupsOf(){
+  var m={},ord=[];
+  HL.forEach(function(h){if(!m[h.g]){m[h.g]={g:h.g,k:h.k,items:[],ts:h.ts||0};ord.push(m[h.g])}m[h.g].items.push(h)});
+  ord.forEach(function(x){x.items.sort(function(a,b){return a.p-b.p||a.a-b.a})});
+  return ord;
+}
+function secByKey(k){var a=k.split("."),wi=/^\d+$/.test(a[0])?+a[0]:WORKS.findIndex(function(w){return w.id===a[0]});return WORKS[wi]&&WORKS[wi].sections[+a[1]]}
+function excerptText(gs){
+  return gs.map(function(g){
+    var sec=secByKey(g.k);
+    return "„"+g.items.map(function(x){return x.t}).join(" … ")+"“\n— "+(sec?srcOf(sec):g.k);
+  }).join("\n\n")+"\n\nAus: Homöopathie Nachschlagewerk";
+}
+function shareOut(title,text){
+  try{if(window.HNAndroid&&HNAndroid.shareText){HNAndroid.shareText(title,text);return}}catch(e){}
+  if(navigator.share){navigator.share({title:title,text:text}).catch(function(){});return}
+  dlText(title,text);
+}
+function dlText(title,text){
+  var b=new Blob([text],{type:"text/plain;charset=utf-8"}),u=URL.createObjectURL(b),a=document.createElement("a");
+  a.href=u;a.download=title.replace(/[^\wäöüÄÖÜß\- ]/g,"").trim().replace(/\s+/g,"_")+".txt";document.body.appendChild(a);a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(u)},500);
+}
+function copyOut(text){
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text);return true}}catch(e){}
+  var ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
+  var ok=false;try{ok=document.execCommand("copy")}catch(e){}document.body.removeChild(ta);return ok;
+}
+function toast(t){var e=document.getElementById("libStatus");if(!e)return;e.hidden=false;e.textContent=t;setTimeout(function(){e.hidden=true},1800)}
+function selAsGroup(){
+  var sec=curSec(),k=bmKey(sec);
+  return [{g:"x",k:k,items:(SELP||[]).map(function(x){return {t:x.t,p:x.p}})}];
+}
+function addHl(){
+  if(!SELP)return;
+  var k=bmKey(curSec()),g="h"+Date.now().toString(36)+Math.floor(Math.random()*1000);
+  SELP.forEach(function(x){HL.push({g:g,k:k,p:x.p,a:x.a,b:x.b,t:x.t,ts:Date.now()})});
+  hlSave();SELP=null;window.getSelection().removeAllRanges();hideSelBar();renderReader();renderEx();
+  toast("Markiert. Unter „Merkliste“ finden Sie Ihre Auszüge.");
+}
+function renderEx(){
+  var box=document.getElementById("exList");if(!box)return;
+  var gs=groupsOf().sort(function(a,b){return b.ts-a.ts});
+  document.getElementById("exTools").hidden=!gs.length;
+  if(!gs.length){box.innerHTML='<div class="empty">Noch keine Auszüge. Markieren Sie im Lesen einen Text mit dem Finger und tippen Sie auf „Markieren“.</div>';return}
+  box.innerHTML=gs.map(function(g){
+    var sec=secByKey(g.k);if(!sec)return"";
+    return '<div class="row"><div class="hit" data-w="'+sec.w+'" data-s="'+sec.i+'" data-p="'+g.items[0].p+'"><div class="hit-h"><b>'+esc(secName(sec))+'</b><em>'+esc(secCap(sec))+'</em></div><p><mark class="hlu">'+esc(g.items.map(function(x){return x.t}).join(" … "))+'</mark></p></div><div class="exbtn"><button class="rm" data-exshare="'+g.g+'">Teilen</button><button class="rm" data-exrm="'+g.g+'">Entfernen</button></div></div>';
+  }).join("");
 }
 
 /* Merkliste */
@@ -1241,6 +1362,37 @@ $("#aRead").addEventListener("click",function(e){
 /* Start */
 $("#q").value=S.q;
 buildToc();renderBm();
+document.getElementById("selbar").addEventListener("pointerdown",function(){clearTimeout(selTimer)});
+document.getElementById("selbar").addEventListener("click",function(e){
+  var id=e.target.id,bar=document.getElementById("selbar");
+  if(id==="sbMark")addHl();
+  else if(id==="sbCopy"){var t=(SELP||[]).map(function(x){return x.t}).join("\n");toast(copyOut(t)?"Kopiert.":"Kopieren nicht möglich.");}
+  else if(id==="sbShare"){
+    var g=bar.dataset.g;
+    if(g){var gr=groupsOf().filter(function(x){return x.g===g});if(gr.length)shareOut("Auszug",excerptText(gr))}
+    else if(SELP)shareOut("Auszug",excerptText(selAsGroup()));
+  }
+  else if(id==="sbDel"){
+    var g2=bar.dataset.g;HL=HL.filter(function(x){return x.g!==g2});hlSave();hideSelBar();renderReader();renderEx();
+  }
+});
+document.getElementById("reader").addEventListener("click",function(e){
+  var m=e.target.closest&&e.target.closest("mark.hlu");
+  if(m&&window.getSelection().isCollapsed)showSelBar("del",m.dataset.hg);
+  else if(!m&&window.getSelection().isCollapsed&&document.getElementById("selbar").dataset.g)hideSelBar();
+});
+document.getElementById("exList").addEventListener("click",function(e){
+  var t=e.target,sh=t.closest("[data-exshare]"),rm=t.closest("[data-exrm]"),hit=t.closest(".hit");
+  if(sh){var gr=groupsOf().filter(function(x){return x.g===sh.dataset.exshare});if(gr.length)shareOut("Auszug",excerptText(gr));return}
+  if(rm){HL=HL.filter(function(x){return x.g!==rm.dataset.exrm});hlSave();renderEx();return}
+  if(hit){openSection(+hit.dataset.w,+hit.dataset.s,false,+hit.dataset.p)}
+});
+document.getElementById("exShareAll").addEventListener("click",function(){var gs=groupsOf();if(gs.length)shareOut("Meine Auszüge",excerptText(gs))});
+document.getElementById("exCopyAll").addEventListener("click",function(){var gs=groupsOf();if(gs.length)toast(copyOut(excerptText(gs))?"Kopiert.":"Kopieren nicht möglich.")});
+document.getElementById("exFile").addEventListener("click",function(){var gs=groupsOf();if(gs.length)dlText("Meine Auszüge",excerptText(gs))});
+try{if(window.HNAndroid&&HNAndroid.shareText)document.getElementById("exFile").hidden=true}catch(e){}
+renderEx();
+
 $("#foot").innerHTML=WORKS.map(function(w){return w.title+" ("+w.sub+")"}).join(" · ")+" · "+NP+" Absätze in "+NS+" Abschnitten. Clarke, Klinik-Verzeichnis ("+CL.length+" Arzneien, "+KI.length+" Beschwerden). Die Suche läuft vollständig in Ihrem Browser. Die Texte von Clarke und Boericke sind eigene Übersetzungen aus gemeinfreien englischen Originalen; Boger liegt im englischen Original vor. Eine Idee von <a href=\"https://autoknigge.de\" target=\"_blank\" rel=\"noopener\">autoknigge.de</a>. <a href=\"https://autoknigge.de/homoeopathie/datenschutz.html\" target=\"_blank\" rel=\"noopener\">Datenschutz</a> · <a href=\"https://autoknigge.de/impressum\" target=\"_blank\" rel=\"noopener\">Impressum</a><span id=\"adOpt\"></span>";
 try{if(window.HNAndroid&&HNAndroid.privacyOptionsRequired&&HNAndroid.privacyOptionsRequired()){var ao=document.getElementById("adOpt");ao.innerHTML=' · <a href="#" id="adOptL">Werbe-Einstellungen</a>';document.getElementById("adOptL").addEventListener("click",function(e){e.preventDefault();HNAndroid.showPrivacyOptions()})}}catch(e){}
 show(hashView());

@@ -51,6 +51,16 @@ public class MainActivity extends Activity {
         s.setTextZoom(100);
         web.addJavascriptInterface(new Object() {
             @JavascriptInterface
+            public void shareText(final String title, final String text) {
+                runOnUiThread(new Runnable() { public void run() {
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("text/plain");
+                    i.putExtra(Intent.EXTRA_SUBJECT, title);
+                    i.putExtra(Intent.EXTRA_TEXT, text);
+                    startActivity(Intent.createChooser(i, title));
+                } });
+            }
+            @JavascriptInterface
             public void sectionOpened() {
                 runOnUiThread(new Runnable() { public void run() { onSectionOpened(); } });
             }

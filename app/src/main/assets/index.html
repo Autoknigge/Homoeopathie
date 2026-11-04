@@ -233,8 +233,6 @@ mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor
   <section id="v-lesen" hidden>
     <div class="bar">
       <button class="btn" id="tocBtn" aria-expanded="false">📚 Literaturauswahl ▾</button>
-      <button class="btn" id="prev" aria-label="Voriger Abschnitt">‹ Zurück</button>
-      <button class="btn" id="next" aria-label="Nächster Abschnitt">Weiter ›</button>
       <label class="grow">Gehe zu
         <input class="jump" id="jump" type="text" list="jumplist" placeholder="§ 12 oder Sulphur" autocomplete="off"></label>
       <datalist id="jumplist"></datalist>
@@ -464,6 +462,7 @@ var SYN=[
 ["Homöopathie","Homöopathik","Homoeopathie","Homöopathisch"]
 ];
 
+function headW(l){return wordsOf(String(l).split(/[.,;:(\u2013\u2014]/)[0])}
 function wordsOf(e){return (e.match(new RegExp(WORD,"g"))||[]).map(norm)}
 (function(){
   var SYN2=JSON.parse(document.getElementById("syn2").textContent),idx=new Map();
@@ -658,14 +657,14 @@ function run(){
     var rk0=nameRankFn(terms[0].raw,S.syn?findGroups(terms[0].raw):{groups:[]});
     SECS.forEach(function(sec){
       if(sec.m||by[sec.gid]||!inScope(sec)||!sec.paras.length)return;
-      if(rk0(wordsOf(sec.label))<=1)by[sec.gid]=[{g:sec.g0,d:1}];
+      if(rk0(headW(sec.label))<=1)by[sec.gid]=[{g:sec.g0,d:1}];
     });
   }
   var results=[];
   Object.keys(by).forEach(function(k){var sec=SECS[+k];results.push({sec:sec,n:by[k].length,hits:by[k]})});
   var rkf=null;
   if(terms.length===1&&terms[0].raw.length){var t0=terms[0];rkf=nameRankFn(t0.raw,S.syn?findGroups(t0.raw):{groups:[]})}
-  results.forEach(function(r){r.rk=(rkf&&!r.sec.m)?rkf(wordsOf(r.sec.label)):9});
+  results.forEach(function(r){r.rk=(rkf&&!r.sec.m)?rkf(headW(r.sec.label)):9});
   if(S.sort==="hits")results.sort(function(a,b){return a.rk-b.rk||b.n-a.n||a.sec.gid-b.sec.gid});
   else results.sort(function(a,b){return a.rk-b.rk||a.sec.gid-b.sec.gid});
   S.results=results;
@@ -807,7 +806,6 @@ function renderReader(){
   h+=pager+'<div class="text'+(numbered?" numbered":"")+'">'+html+'</div>'+pager;
   $("#reader").innerHTML=h;
   var secs=WORKS[S.cur.w].sections;
-  $("#prev").disabled=S.cur.s===0;$("#next").disabled=S.cur.s===secs.length-1;
   document.querySelectorAll("#toc button").forEach(function(bt){bt.setAttribute("aria-current",(+bt.dataset.w===S.cur.w&&+bt.dataset.s===S.cur.s)?"true":"false")});
   document.documentElement.style.setProperty("--read-size",(1.05*S.fs).toFixed(3)+"rem");
   lsSet("hn.cur",S.cur);
@@ -1022,6 +1020,7 @@ function nameRankFn(raw,fg){
     var j=nn.join(" "),f0=nn[0]||"",k;
     if(full[j])return 0;
     if(firstW[f0])return 1;
+    for(k in full)if(k.indexOf(' ')>0&&(j+' ').indexOf(k+' ')===0)return 1;
     for(k in firstW)if(k.length>=4&&f0.indexOf(k)===0)return 2;
     if(f0.indexOf(raw.length?norm(raw[0]):"#")===0)return 2;
     for(var i=1;i<nn.length;i++){if(firstW[nn[i]])return 3;for(k in firstW)if(k.length>=4&&nn[i].indexOf(k)===0)return 3}
@@ -1160,8 +1159,25 @@ $("#bmList").addEventListener("click",function(e){
 $("#toc").addEventListener("click",function(e){var b=e.target.closest("button");if(b&&b.dataset.lib){loadWork(b.dataset.lib,function(wi){openSection(wi,0,false)});$("#toc").hidden=true;$("#tocBtn").setAttribute("aria-expanded","false");return}if(b){$("#toc").hidden=true;$("#tocBtn").setAttribute("aria-expanded","false");openSection(+b.dataset.w,+b.dataset.s,false)}});
 $("#tocBtn").addEventListener("click",function(){var t=$("#toc");t.hidden=!t.hidden;this.setAttribute("aria-expanded",String(!t.hidden));this.textContent="📚 Literaturauswahl "+(t.hidden?"▾":"▴")});
 function step(d){var n=S.cur.s+d,max=WORKS[S.cur.w].sections.length-1;if(n<0||n>max)return;S.hl=false;S.cur.s=n;S.chunk=0;S.focus=0;renderReader();window.scrollTo(0,0)}
-$("#prev").addEventListener("click",function(){step(-1)});
-$("#next").addEventListener("click",function(){step(1)});
+/* Wischen zum Blättern: links = weiter, rechts = zurück */
+(function(){
+  var x0=0,y0=0,t0=0,ok=false,rd=document.getElementById("reader");
+  rd.addEventListener("touchstart",function(e){
+    if(e.touches.length!==1){ok=false;return}
+    var t=e.touches[0];x0=t.clientX;y0=t.clientY;t0=Date.now();ok=!e.target.closest("table,pre,input,textarea")
+  },{passive:true});
+  rd.addEventListener("touchend",function(e){
+    if(!ok)return;ok=false;
+    var sel=window.getSelection();if(sel&&!sel.isCollapsed)return;
+    var t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;
+    if(Math.abs(dx)<70||Math.abs(dy)>Math.abs(dx)*0.6||Date.now()-t0>700)return;
+    var d=dx<0?1:-1,secs=WORKS[S.cur.w].sections,n=curSec().paras.length,chunks=Math.max(1,Math.ceil(n/CH));
+    if(chunks>1&&d>0&&S.chunk<chunks-1){S.chunk++;S.focus=S.chunk*CH;renderReader();window.scrollTo(0,0);return}
+    if(chunks>1&&d<0&&S.chunk>0){S.chunk--;S.focus=S.chunk*CH;renderReader();window.scrollTo(0,0);return}
+    if(S.cur.s+d<0||S.cur.s+d>secs.length-1){toast(d>0?"Letzter Abschnitt.":"Erster Abschnitt.");return}
+    step(d);
+  },{passive:true});
+})();
 function jump(){
   var inp=$("#jump"),sec=findSection(inp.value);
   if(sec){inp.value="";inp.blur();openSection(sec.w,sec.i,false)}
@@ -1390,7 +1406,7 @@ document.getElementById("exFile").addEventListener("click",function(){var gs=gro
 try{if(window.HNAndroid&&HNAndroid.shareText)document.getElementById("exFile").hidden=true}catch(e){}
 renderEx();
 
-$("#foot").innerHTML=WORKS.map(function(w){return w.title+" ("+w.sub+")"}).join(" · ")+" · "+NP+" Absätze in "+NS+" Abschnitten. Clarke, Klinik-Verzeichnis ("+CL.length+" Arzneien, "+KI.length+" Beschwerden). Die Suche läuft vollständig in Ihrem Browser. Die Texte von Clarke und Boericke sind eigene Übersetzungen aus gemeinfreien englischen Originalen; Boger liegt im englischen Original vor. Eine Idee von <a href=\"https://autoknigge.de\" target=\"_blank\" rel=\"noopener\">autoknigge.de</a>. <a href=\"https://autoknigge.de/homoeopathie/datenschutz.html\" target=\"_blank\" rel=\"noopener\">Datenschutz</a> · <a href=\"https://autoknigge.de/impressum\" target=\"_blank\" rel=\"noopener\">Impressum</a><span id=\"adOpt\"></span>";
+$("#foot").innerHTML="Eine Idee von <a href=\"https://autoknigge.de\" target=\"_blank\" rel=\"noopener\">autoknigge.de</a> · <a href=\"https://autoknigge.de/homoeopathie/datenschutz.html\" target=\"_blank\" rel=\"noopener\">Datenschutz</a> · <a href=\"https://autoknigge.de/impressum\" target=\"_blank\" rel=\"noopener\">Impressum</a><span id=\"adOpt\"></span>";
 try{if(window.HNAndroid&&HNAndroid.privacyOptionsRequired&&HNAndroid.privacyOptionsRequired()){var ao=document.getElementById("adOpt");ao.innerHTML=' · <a href="#" id="adOptL">Werbe-Einstellungen</a>';document.getElementById("adOptL").addEventListener("click",function(e){e.preventDefault();HNAndroid.showPrivacyOptions()})}}catch(e){}
 show(hashView());
 renderResults();

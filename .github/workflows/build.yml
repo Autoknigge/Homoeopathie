@@ -1,15 +1,8 @@
 name: Build
-on:
-  push:
-    paths-ignore: ['README.md', 'store/**']
-  workflow_dispatch:
-concurrency:
-  group: build-${{ github.ref }}
-  cancel-in-progress: true
+on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -26,7 +19,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: gradle :app:assembleRelease :app:bundleRelease --no-daemon --build-cache --parallel
+        run: gradle :app:assembleRelease :app:bundleRelease --no-daemon
       - name: Dateien umbenennen
         run: |
           mkdir out

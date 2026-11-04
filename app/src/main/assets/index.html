@@ -634,12 +634,20 @@ function run(){
     if(d){any[g2]=1;(by[sg]||(by[sg]=[])).push({g:g2,d:d})}
   }
   S.any=any;
+  if(terms.length===1&&terms[0].raw.length&&!S.region){
+    var rk0=nameRankFn(terms[0].raw,S.syn?findGroups(terms[0].raw):{groups:[]});
+    SECS.forEach(function(sec){
+      if(sec.m||by[sec.gid]||!inScope(sec)||!sec.paras.length)return;
+      if(rk0(wordsOf(sec.label))<=1)by[sec.gid]=[{g:sec.g0,d:1}];
+    });
+  }
   var results=[];
   Object.keys(by).forEach(function(k){var sec=SECS[+k];results.push({sec:sec,n:by[k].length,hits:by[k]})});
-  var nq=norm(S.q||"").replace(/[^a-zäöüß ]/g,"").trim();
-  results.forEach(function(r){r.nm=nq.length>2&&!r.sec.m&&norm(r.sec.label).indexOf(nq)>-1?1:0});
-  if(S.sort==="hits")results.sort(function(a,b){return b.nm-a.nm||b.n-a.n||a.sec.gid-b.sec.gid});
-  else results.sort(function(a,b){return a.sec.gid-b.sec.gid});
+  var rkf=null;
+  if(terms.length===1&&terms[0].raw.length){var t0=terms[0];rkf=nameRankFn(t0.raw,S.syn?findGroups(t0.raw):{groups:[]})}
+  results.forEach(function(r){r.rk=(rkf&&!r.sec.m)?rkf(wordsOf(r.sec.label)):9});
+  if(S.sort==="hits")results.sort(function(a,b){return a.rk-b.rk||b.n-a.n||a.sec.gid-b.sec.gid});
+  else results.sort(function(a,b){return a.rk-b.rk||a.sec.gid-b.sec.gid});
   S.results=results;
   if(terms.length===1&&terms[0].all){
     S.variantList=terms[0].all.map(function(id){return [VL[id],VF[id]]}).sort(function(a,b){return b[1]-a[1]});

@@ -1,6 +1,6 @@
 # Homöopathie Nachschlagewerk
 Offline-Nachschlagewerk (WebView). Inhalt: app/src/main/assets/index.html
-Paket: de.autoknigge.hahnemannco
+Paket: de.autoknigge.homoeopathie
 
 1. Ordner als neues GitHub-Repo hochladen (z. B. Autoknigge/HahnemannCo).
 2. Actions -> Build starten. Ergebnis unter "Artifacts": APK zum Testen, AAB für den Play Store.

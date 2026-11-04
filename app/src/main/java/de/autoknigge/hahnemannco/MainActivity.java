@@ -20,6 +20,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.ConsentRequestParameters;
+import com.google.android.ump.ConsentForm;
 import com.google.android.ump.UserMessagingPlatform;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -52,6 +53,22 @@ public class MainActivity extends Activity {
             @JavascriptInterface
             public void sectionOpened() {
                 runOnUiThread(new Runnable() { public void run() { onSectionOpened(); } });
+            }
+            @JavascriptInterface
+            public boolean privacyOptionsRequired() {
+                return UserMessagingPlatform.getConsentInformation(MainActivity.this).getPrivacyOptionsRequirementStatus()
+                    == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED;
+            }
+            @JavascriptInterface
+            public void showPrivacyOptions() {
+                runOnUiThread(new Runnable() { public void run() {
+                    UserMessagingPlatform.showPrivacyOptionsForm(MainActivity.this,
+                        new ConsentForm.OnConsentFormDismissedListener() {
+                            @Override public void onConsentFormDismissed(com.google.android.ump.FormError e) {
+                                if (UserMessagingPlatform.getConsentInformation(MainActivity.this).canRequestAds()) initAds();
+                            }
+                        });
+                } });
             }
         }, "HNAndroid");
         web.setWebViewClient(new WebViewClient() {

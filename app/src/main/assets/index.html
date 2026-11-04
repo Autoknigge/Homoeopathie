@@ -1029,7 +1029,8 @@ $("#aRead").addEventListener("click",function(e){
 /* Start */
 $("#q").value=S.q;
 buildToc();renderBm();
-$("#foot").innerHTML=WORKS.map(function(w){return w.title+" ("+w.sub+")"}).join(" · ")+" · "+NP+" Absätze in "+NS+" Abschnitten. Clarke, Klinik-Verzeichnis ("+CL.length+" Arzneien, "+KI.length+" Beschwerden). Die Suche läuft vollständig in Ihrem Browser. Die Texte von Clarke und Boericke sind eigene Übersetzungen aus gemeinfreien englischen Originalen; Boger liegt im englischen Original vor. Eine Idee von <a href=\"https://autoknigge.de\" target=\"_blank\" rel=\"noopener\">autoknigge.de</a>.";
+$("#foot").innerHTML=WORKS.map(function(w){return w.title+" ("+w.sub+")"}).join(" · ")+" · "+NP+" Absätze in "+NS+" Abschnitten. Clarke, Klinik-Verzeichnis ("+CL.length+" Arzneien, "+KI.length+" Beschwerden). Die Suche läuft vollständig in Ihrem Browser. Die Texte von Clarke und Boericke sind eigene Übersetzungen aus gemeinfreien englischen Originalen; Boger liegt im englischen Original vor. Eine Idee von <a href=\"https://autoknigge.de\" target=\"_blank\" rel=\"noopener\">autoknigge.de</a>. <a href=\"https://autoknigge.de/homoeopathie/datenschutz.html\" target=\"_blank\" rel=\"noopener\">Datenschutz</a> · <a href=\"https://autoknigge.de/impressum\" target=\"_blank\" rel=\"noopener\">Impressum</a><span id=\"adOpt\"></span>";
+try{if(window.HNAndroid&&HNAndroid.privacyOptionsRequired&&HNAndroid.privacyOptionsRequired()){var ao=document.getElementById("adOpt");ao.innerHTML=' · <a href="#" id="adOptL">Werbe-Einstellungen</a>';document.getElementById("adOptL").addEventListener("click",function(e){e.preventDefault();HNAndroid.showPrivacyOptions()})}}catch(e){}
 show(hashView());
 renderResults();
 setTimeout(function(){

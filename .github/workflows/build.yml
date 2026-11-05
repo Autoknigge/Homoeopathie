@@ -8,7 +8,7 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '17' }
       - uses: gradle/actions/setup-gradle@v4
-        with: { gradle-version: '8.10.2' }
+        with: { gradle-version: '8.11.1' }
       - name: Keystore (optional, nur wenn Secret vorhanden)
         env:
           KS_B64: ${{ secrets.KEYSTORE_BASE64 }}

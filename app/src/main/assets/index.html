@@ -52,6 +52,13 @@ details.kl{border:1px solid var(--line);border-radius:10px;background:var(--surf
 details.optd{margin:.8rem 0 .2rem}details.optd>summary{cursor:pointer;display:block;text-align:center;padding:.7rem 1rem;border-radius:8px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--fg);font-weight:700;list-style:none}details.optd>summary::-webkit-details-marker{display:none}
 .sugg{position:absolute;left:0;right:0;top:100%;z-index:30;margin-top:2px;background:var(--surface);border:1px solid var(--accent);border-radius:8px;box-shadow:0 8px 22px rgba(0,0,0,.28);overflow:hidden}.sugg button{display:flex;justify-content:space-between;gap:.6rem;width:100%;text-align:left;padding:.7rem .9rem;background:none;border:0;border-bottom:1px solid var(--line);font-size:1.02rem}.sugg button:last-child{border-bottom:0}.sugg button small{color:var(--muted);flex:none}.sugg button:active{background:var(--accent-soft)}
 ::selection{background:#ffc83d;color:#1b1500}::-moz-selection{background:#ffc83d;color:#1b1500}
+.cmp{display:flex;gap:.8rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:.2rem 0 .7rem;-webkit-overflow-scrolling:touch}
+.cmpcol{flex:0 0 min(90%,440px);scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.7rem .9rem;max-height:72vh;overflow:auto;min-width:0}
+.cmpcol.cmpb{border-top:4px solid var(--accent)}.cmpcol h3{margin:.1rem 0 0;color:var(--teal)}.cmpcol h4{margin:.8rem 0 .2rem}.cmpcol p{margin:.4rem 0;font-family:var(--f-read)}
+.cmpbtn{width:100%;margin:.8rem 0 .2rem;padding:.7rem 1rem;border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.extags{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;margin:.3rem 0 .2rem}.tagc{font-size:.8rem;padding:.15rem .6rem}
+.tagin{flex:1;min-width:8rem;font:inherit;font-size:.85rem;padding:.3rem .6rem;border:1px dashed var(--line);border-radius:999px;background:transparent}
+.exq{width:100%;font:inherit;padding:.6rem .8rem;margin:.4rem 0;background:var(--surface);border:1px solid var(--line);border-radius:6px}
 main{padding-block:1.4rem 4rem}
 h2{font:700 1.25rem/1.3 var(--f-display);color:var(--teal);margin:0 0 .3rem;text-wrap:balance}
 .lead{color:var(--muted);margin:0 0 1rem;max-width:62ch}
@@ -210,6 +217,7 @@ mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor
     </div>
     </details>
     <p class="hint">Mehrere Wörter müssen im selben Abschnitt vorkommen. In Anführungszeichen („Reine Arznei“) suchen Sie eine feste Wortfolge.</p>
+    <div id="cmpHint"></div>
     <div id="variants"></div>
     <div id="results" aria-live="polite"></div>
     <div id="kres" aria-live="polite"></div>
@@ -233,6 +241,16 @@ mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor
   </section>
 
   <button id="totop" aria-label="Nach oben zum Menü" hidden>▲</button>
+  <section id="v-vergleich" hidden>
+    <p><button class="btn" id="cmpBack">‹ Zurück</button></p>
+    <h2>Autoren vergleichen</h2>
+    <div class="searchbox"><input id="cmpQ" type="search" placeholder="Mittel, z. B. sulph" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Mittel"></div>
+    <div class="searchbox" style="margin-top:.5rem"><input id="cmpQ2" type="search" placeholder="Zweites Mittel (optional)" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Zweites Mittel"></div>
+    <p><button class="btn" id="cmpGo">Vergleichen</button></p>
+    <div class="chips" id="cmpAuth"></div>
+    <div id="cmpOut"></div>
+  </section>
+
   <section id="v-lesen" hidden>
     <div class="bar">
       <button class="btn" id="tocBtn" aria-expanded="false">📚 Literaturauswahl ▾</button>
@@ -242,6 +260,7 @@ mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor
       <button class="btn" id="fsm" aria-label="Schrift kleiner">A−</button>
       <button class="btn" id="fsp" aria-label="Schrift größer">A+</button>
     </div>
+    <div id="recent"></div>
     <div class="toc" id="toc" hidden></div>
     <div id="reader"></div>
   </section>
@@ -253,6 +272,8 @@ mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor
     <h2 style="margin-top:2rem">Meine Auszüge</h2>
     <p class="lead">Markierte Textstellen mit Quellenangabe. Zum Markieren im Lesen einen Text mit dem Finger auswählen und auf „Markieren“ tippen.</p>
     <p id="exTools" class="extools" hidden><button class="btn" id="exShareAll">Alle teilen</button> <button class="btn" id="exCopyAll">Alle kopieren</button> <button class="btn" id="exFile">Als Textdatei speichern</button></p>
+    <input id="exQ" type="search" class="exq" placeholder="Auszüge durchsuchen …" autocomplete="off" hidden>
+    <div class="chips" id="exTagBar"></div>
     <div class="list" id="exList"></div>
   </section>
 
@@ -512,7 +533,7 @@ function matchSynPhrase(toks,words){
   return res;
 }
 
-var VIEWS=["suchen","arz","lesen","merkliste","schreibweisen"];
+var VIEWS=["suchen","arz","vergleich","lesen","merkliste","schreibweisen"];
 var CH=120;
 var S={q:"",equiv:true,syn:true,region:"",expanded:"",scope:[],sort:"hits",variant:null,shown:30,hl:false,
   cur:lsGet("hn.cur",{w:0,s:3}),chunk:0,focus:0,fs:lsGet("hn.fs",1),bm:lsGet("hn.bm",[]),terms:[],results:null,variantList:[],any:null};
@@ -716,7 +737,7 @@ function refOf(sec,p){
   return r;
 }
 function renderResults(){
-  var box=$("#results"),vb=$("#variants");
+  var box=$("#results"),vb=$("#variants");setCmpHint();
   if(!READY){box.innerHTML='<div class="ldg">Das Wörterverzeichnis wird aufgebaut. Das dauert einen Moment.</div>';vb.innerHTML="";return}
   if(!S.results){box.innerHTML='<div class="empty">Tippen Sie ein Wort ein, um in '+NS+' Abschnitten zu suchen.</div>';vb.innerHTML="";return}
   var r=S.results,sumHits=r.reduce(function(a,x){return a+x.n},0);
@@ -727,7 +748,7 @@ function renderResults(){
   }
   if(S.expanded)vh='<p class="hint" style="margin-top:.9rem">Erkannt als Arznei: '+esc(S.expanded)+'. Namen und Abkürzungen dazu werden mitgesucht.</p>'+vh;
   vb.innerHTML=vh;
-  if(!r.length){box.innerHTML='<div class="empty">Kein Treffer für „'+esc(S.q)+'“. Versuchen Sie einen kürzeren Wortstamm, zum Beispiel „krankheit“ statt „Krankheitszeichen“.</div>';return}
+  if(!r.length){var dy=didYouMean(S.q);box.innerHTML='<div class="empty">Kein Treffer für „'+esc(S.q)+'“. Versuchen Sie einen kürzeren Wortstamm, zum Beispiel „krankheit“ statt „Krankheitszeichen“.'+(dy?'<p style="margin-top:.8rem">Meinten Sie: <button class="chip" data-dym="'+esc(dy)+'">'+esc(dy)+'</button></p>':'')+'</div>';return}
   var html='<p class="sum">'+sumHits+(sumHits===1?" Absatz":" Absätze")+' in '+r.length+' Abschnitten <span>'+(S.equiv?"· alte und neue Schreibweise":"· genau wie eingegeben")+'</span></p>';
   r.slice(0,S.shown).forEach(function(x){
     var sec=x.sec;
@@ -810,7 +831,7 @@ function renderReader(){
   var h="";
   if(hlOn)h+='<div class="hl"><span class="grow">'+(hp.length?hp.length+(hp.length===1?" Absatz":" Absätze")+' mit „'+esc(S.q)+'“ in diesem Abschnitt':'Kein Treffer für „'+esc(S.q)+'“ in diesem Abschnitt')+'</span>'+(hp.length>1?'<button class="btn" id="nextHit">Nächster Treffer</button>':"")+'<button class="btn" id="clearHl">Hervorhebung aus</button></div>';
   if((sec.w===3||sec.w===4)&&boPair(sec))h+='<p style="margin:0 0 .8rem"><button class="btn" id="langSw">'+(sec.w===3?'Auf Deutsch lesen':'Read the English original')+'</button></p>';
-  if(sec.w===2||((sec.w===3||sec.w===4)&&!sec.m))h+='<p style="margin:0 0 .8rem"><button class="btn" id="toKlinik">Beschwerden bei Clarke ansehen</button></p>';
+  if(sec.w>0&&!sec.m&&sec.paras.length>0&&headW(sec.label).length&&!/^(einleitung|vorwort|die arzneien|psora)/i.test(sec.label))h+='<p style="margin:0 0 .8rem"><button class="btn" id="toCmp">⇄ Mit anderen Autoren vergleichen</button></p>';
   h+='<div class="sec-h"><div><small>'+esc(ofTxt)+'</small><h1>'+esc(secName(sec))+'</h1></div><button class="star" id="star" aria-pressed="'+starOn+'">'+(starOn?"★ Gemerkt":"☆ Merken")+'</button></div>';
   if(sec.w===1&&sec.label!==secName(sec))h+='<p class="hint" style="margin:-.4rem 0 1rem">'+esc(sec.label)+'</p>';
   h+=pager+'<div class="text'+(numbered?" numbered":"")+'">'+html+'</div>'+pager;
@@ -829,7 +850,7 @@ function openSection(w,s,hl,pi){
   try{if(window.HNAndroid&&HNAndroid.sectionOpened)HNAndroid.sectionOpened()}catch(e){}
   S.cur={w:w,s:s};S.hl=!!hl;S.chunk=0;S.focus=0;
   if(location.hash!=="#lesen")location.hash="lesen";else show("lesen");
-  var sec=curSec();
+  var sec=curSec();addRecent(sec);
   if(pi===undefined&&hl){var hp=hitParas(sec);pi=hp.length?hp[0]:undefined}
   if(pi!==undefined){gotoPara(pi)}else{renderReader();window.scrollTo(0,0)}
 }
@@ -843,6 +864,154 @@ function nextHit(){
 /* Markierungen und Auszüge */
 var HL=lsGet("hn.hl",[]);
 function hlSave(){lsSet("hn.hl",HL)}
+
+/* ===== Vergleich (Quellenvergleich) ===== */
+var CMP={q:"",q2:"",off:{}};
+function authShort(sec){
+  var w=sec.w;if(w===0)return "Organon";if(w===1)return "Chron. Krankheiten";if(w===2)return "Boericke";if(w===3)return "Boger (engl.)";if(w===4)return "Boger (dt.)";
+  var L=LIB.filter(function(l){return l.id===WORKS[w].id})[0];return L?L.short:WORKS[w].title;
+}
+function cmpSecs(q){
+  var raw=(q.match(new RegExp(WORD,"g"))||[]).filter(function(x){return norm(x).length>=1});if(!raw.length)return [];
+  var rk=nameRankFn(raw,findGroups(raw)),out=[];
+  SECS.forEach(function(sec){if(sec.m||sec.w===0||!sec.paras.length)return;if(rk(headW(sec.label))===0)out.push(sec)});
+  out.sort(function(a,b){return wRank(a)-wRank(b)||a.gid-b.gid});
+  return out;
+}
+function openCompare(q,q2){CMP.q=q||"";CMP.q2=q2||"";CMP.off={};if(location.hash!=="#vergleich")location.hash="vergleich";else renderCompare();window.scrollTo(0,0)}
+function renderCompare(){
+  $("#cmpQ").value=CMP.q;$("#cmpQ2").value=CMP.q2;
+  var a=cmpSecs(CMP.q),b=CMP.q2.trim()?cmpSecs(CMP.q2):[],auth=[],seen={};
+  a.concat(b).forEach(function(sec){var k=authShort(sec);if(!seen[k]){seen[k]=1;auth.push(k)}});
+  $("#cmpAuth").innerHTML=auth.map(function(k){return '<button class="chip" data-ca="'+esc(k)+'" aria-pressed="'+!CMP.off[k]+'">'+esc(k)+'</button>'}).join("");
+  var cols=[];
+  auth.forEach(function(k){if(CMP.off[k])return;
+    a.filter(function(s){return authShort(s)===k}).forEach(function(s){cols.push({s:s,k:k,b:false})});
+    b.filter(function(s){return authShort(s)===k}).forEach(function(s){cols.push({s:s,k:k,b:true})});
+  });
+  if(!CMP.q.trim()){$("#cmpOut").innerHTML='<div class="empty">Geben Sie ein Mittel ein, zum Beispiel „sulph“. Optional ein zweites Mittel zum Vergleich.</div>';return}
+  if(!cols.length){$("#cmpOut").innerHTML='<div class="empty">Zu „'+esc(CMP.q)+'“ gibt es keinen Artikel unter diesem Namen.</div>';return}
+  $("#cmpOut").innerHTML='<p class="hint">'+cols.length+' Spalten. Nach links und rechts wischen.</p><div class="cmp">'+cols.map(function(c){
+    var ps=c.s.paras.filter(function(p){return !p.f}),more=ps.length>10;
+    return '<div class="cmpcol'+(c.b?' cmpb':'')+'"><h3>'+esc(c.k)+'</h3><p class="meta">'+esc(secName(c.s))+'</p>'+
+      ps.slice(0,10).map(function(p){return p.h?'<h4>'+esc(p.t)+'</h4>':'<p>'+esc(p.t)+'</p>'}).join("")+
+      '<p><button class="btn" data-cw="'+c.s.w+'" data-cs="'+c.s.i+'">'+(more?'Weiterlesen ('+ps.length+' Absätze) ›':'Im Lesen öffnen ›')+'</button></p></div>';
+  }).join("")+'</div>';
+}
+(function(){
+  function go(){CMP.q=$("#cmpQ").value;CMP.q2=$("#cmpQ2").value;CMP.off={};renderCompare()}
+  $("#cmpGo").addEventListener("click",go);
+  ["#cmpQ","#cmpQ2"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();e.target.blur();go()}})});
+  $("#cmpBack").addEventListener("click",function(){if(history.length>1)history.back();else location.hash="suchen"});
+  $("#cmpAuth").addEventListener("click",function(e){var b=e.target.closest("[data-ca]");if(!b)return;CMP.off[b.dataset.ca]=!CMP.off[b.dataset.ca];renderCompare()});
+  $("#cmpOut").addEventListener("click",function(e){var b=e.target.closest("[data-cw]");if(b)openSection(+b.dataset.cw,+b.dataset.cs,false)});
+  $("#cmpHint").addEventListener("click",function(e){if(e.target.closest("[data-cmp]"))openCompare(S.q.trim(),"")});
+})();
+function setCmpHint(){
+  var el=$("#cmpHint"),n=0;
+  if(S.results&&S.terms.length===1){var seenA={};S.results.forEach(function(r){if(r.rk===0&&!r.sec.m&&r.sec.w>0){seenA[authShort(r.sec)]=1}});n=Object.keys(seenA).length}
+  el.innerHTML=n>=2?'<button class="btn cmpbtn" data-cmp="1">⇄ „'+esc(S.q.trim())+'“ bei '+n+' Autoren vergleichen</button>':"";
+}
+
+/* ===== Suchverlauf und „Meinten Sie“ ===== */
+var HIST=lsGet("hn.hist",[]);
+function addHist(q){
+  q=q.trim();if(q.length<2)return;
+  HIST=HIST.filter(function(x){return norm(x)!==norm(q)});HIST.unshift(q);HIST=HIST.slice(0,15);lsSet("hn.hist",HIST);
+}
+var histTimer=null;
+function lev(a,b,max){
+  if(Math.abs(a.length-b.length)>max)return max+1;
+  var d=[],i,j;
+  for(i=0;i<=a.length;i++){d[i]=[i]}for(j=1;j<=b.length;j++)d[0][j]=j;
+  for(i=1;i<=a.length;i++){var rowMin=99;for(j=1;j<=b.length;j++){
+    var c=a.charAt(i-1)===b.charAt(j-1)?0:1;
+    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+c);
+    if(i>1&&j>1&&a.charAt(i-1)===b.charAt(j-2)&&a.charAt(i-2)===b.charAt(j-1))d[i][j]=Math.min(d[i][j],d[i-2][j-2]+1);
+    if(d[i][j]<rowMin)rowMin=d[i][j]}
+    if(rowMin>max)return max+1}
+  return d[a.length][b.length];
+}
+function dymWord(w){
+  var nw=norm(w);if(nw.length<4)return null;
+  var max=nw.length<=5?1:2,best=null,bd=99,bf=-1;
+  function consider(word,disp,f){var d=lev(nw,word,max);if(d<=max&&(d<bd||(d===bd&&f>bf))){bd=d;best=disp;bf=f}}
+  for(var i=0;i<VN.length;i++){if(Math.abs(VN[i].length-nw.length)<=max)consider(VN[i],VL[i],VF[i])}
+  CL.forEach(function(r){r.nn.forEach(function(x,j){if(x.length>=4)consider(x,r.n.split(" ")[j]||r.n,50)})});
+  return best&&norm(best)!==nw?best:null;
+}
+function didYouMean(q){
+  var raw=q.match(new RegExp(WORD,"g"))||[];if(!raw.length||raw.length>4)return "";
+  var changed=false,out=raw.map(function(w){
+    if(wordIds(norm(w)).length||findGroups([w]).groups.length)return w;
+    var s=dymWord(w);if(s){changed=true;return s}return w});
+  return changed?out.join(" "):"";
+}
+
+/* ===== Zuletzt gelesen ===== */
+var RECENT=lsGet("hn.recent",[]);
+function recTitle(sec){return secName(sec)+" · "+authShort(sec)}
+function addRecent(sec){
+  var k=bmKey(sec);
+  RECENT=RECENT.filter(function(x){return x.k!==k});
+  RECENT.unshift({k:k,y:0,ch:0,ts:Date.now()});RECENT=RECENT.slice(0,8);lsSet("hn.recent",RECENT);
+}
+function saveProgress(){
+  if(location.hash!=="#lesen"||!RECENT.length)return;
+  var sec;try{sec=curSec()}catch(e){return}
+  var r=RECENT[0];if(!sec||r.k!==bmKey(sec))return;
+  r.y=window.pageYOffset||0;r.ch=S.chunk||0;lsSet("hn.recent",RECENT);
+}
+(function(){var t=null;window.addEventListener("scroll",function(){clearTimeout(t);t=setTimeout(saveProgress,400)},{passive:true})})();
+function renderRecent(){
+  var box=$("#recent");if(!box)return;
+  var items=RECENT.map(function(r){var sec=secByKey(r.k);return sec?{r:r,sec:sec}:null}).filter(Boolean).slice(0,6);
+  if(!items.length){box.innerHTML="";return}
+  box.innerHTML='<p class="hint" style="margin:.2rem 0 .3rem">Zuletzt gelesen – antippen zum Weiterlesen:</p><div class="chips">'+items.map(function(x,i){
+    return '<button class="chip" data-rc="'+i+'">'+esc(recTitle(x.sec))+'</button>'}).join("")+'</div>';
+  box._i=items;
+}
+function continueRecent(x){
+  var sec=x.sec,y=x.r.y||0,ch=x.r.ch||0;
+  S.cur={w:sec.w,s:sec.i};S.hl=false;S.chunk=ch;S.focus=ch*CH;
+  renderReader();renderRecent();
+  setTimeout(function(){window.scrollTo(0,y)},30);
+}
+
+/* ===== Stichwörter für Auszüge ===== */
+var EXF={q:"",tag:""};
+function exTagsHtml(g){
+  return '<div class="extags">'+g.tags.map(function(t){return '<button class="chip tagc" data-extagrm="'+g.g+'" data-t="'+esc(t)+'">'+esc(t)+' ×</button>'}).join("")+
+    '<input class="tagin" data-g="'+g.g+'" placeholder="＋ Stichwort" maxlength="30" enterkeyhint="done" autocomplete="off"></div>';
+}
+function renderEx(){
+  var box=document.getElementById("exList");if(!box)return;
+  var all=groupsOf().sort(function(a,b){return b.ts-a.ts});
+  document.getElementById("exTools").hidden=!all.length;
+  var tags={};all.forEach(function(g){g.tags.forEach(function(t){tags[t]=(tags[t]||0)+1})});
+  var tl=Object.keys(tags).sort(function(a,b){return a.localeCompare(b,"de")});
+  if(EXF.tag&&!tags[EXF.tag])EXF.tag="";
+  document.getElementById("exQ").hidden=!all.length;
+  document.getElementById("exTagBar").innerHTML=tl.length?('<button class="chip" data-xt="" aria-pressed="'+!EXF.tag+'">Alle</button>'+tl.map(function(t){return '<button class="chip" data-xt="'+esc(t)+'" aria-pressed="'+(EXF.tag===t)+'">'+esc(t)+' <small>'+tags[t]+'</small></button>'}).join("")):"";
+  if(!all.length){box.innerHTML='<div class="empty">Noch keine Auszüge. Markieren Sie im Lesen einen Text mit dem Finger und tippen Sie auf „Markieren“.</div>';return}
+  var gs=all.filter(function(g){
+    if(EXF.tag&&g.tags.indexOf(EXF.tag)<0)return false;
+    if(EXF.q.trim()){var sec=secByKey(g.k),hay=norm(g.items.map(function(x){return x.t}).join(" ")+" "+g.tags.join(" ")+" "+(sec?srcOf(sec):""));
+      return EXF.q.trim().split(/\s+/).every(function(w){return hay.indexOf(norm(w))>-1})}
+    return true});
+  if(!gs.length){box.innerHTML='<div class="empty">Kein Auszug passt zu dieser Suche.</div>';return}
+  box.innerHTML=gs.map(function(g){
+    var sec=secByKey(g.k);if(!sec)return"";
+    return '<div class="row"><div class="hit" data-w="'+sec.w+'" data-s="'+sec.i+'" data-p="'+g.items[0].p+'"><div class="hit-h"><b>'+esc(secName(sec))+'</b><em>'+esc(secCap(sec))+'</em></div><p><mark class="hlu">'+esc(g.items.map(function(x){return x.t}).join(" … "))+'</mark></p></div>'+exTagsHtml(g)+'<div class="exbtn"><button class="rm" data-exshare="'+g.g+'">Teilen</button><button class="rm" data-exrm="'+g.g+'">Entfernen</button></div></div>';
+  }).join("");
+}
+function addTag(g,t){
+  t=t.trim().replace(/\s+/g," ");if(!t)return;
+  HL.forEach(function(h){if(String(h.g)===String(g)){h.tg=h.tg||[];if(h.tg.map(norm).indexOf(norm(t))<0)h.tg.push(t)}});
+  hlSave();renderEx();
+}
+function rmTag(g,t){HL.forEach(function(h){if(String(h.g)===String(g)&&h.tg)h.tg=h.tg.filter(function(x){return x!==t})});hlSave();renderEx()}
+
 function hlRanges(sec,pi){
   var k=bmKey(sec),r=HL.filter(function(x){return x.k===k&&x.p===pi});
   return r.length?r:null;
@@ -893,14 +1062,14 @@ function srcOf(sec){return secCap(sec)+", "+secName(sec)}
 function groupsOf(){
   var m={},ord=[];
   HL.forEach(function(h){if(!m[h.g]){m[h.g]={g:h.g,k:h.k,items:[],ts:h.ts||0};ord.push(m[h.g])}m[h.g].items.push(h)});
-  ord.forEach(function(x){x.items.sort(function(a,b){return a.p-b.p||a.a-b.a})});
+  ord.forEach(function(x){x.items.sort(function(a,b){return a.p-b.p||a.a-b.a});var tg=[];x.items.forEach(function(h){(h.tg||[]).forEach(function(t){if(tg.indexOf(t)<0)tg.push(t)})});x.tags=tg});
   return ord;
 }
 function secByKey(k){var a=k.split("."),wi=/^\d+$/.test(a[0])?+a[0]:WORKS.findIndex(function(w){return w.id===a[0]});return WORKS[wi]&&WORKS[wi].sections[+a[1]]}
 function excerptText(gs){
   return gs.map(function(g){
     var sec=secByKey(g.k);
-    return "„"+g.items.map(function(x){return x.t}).join(" … ")+"“\n— "+(sec?srcOf(sec):g.k);
+    return "„"+g.items.map(function(x){return x.t}).join(" … ")+"“\n— "+(sec?srcOf(sec):g.k)+(g.tags&&g.tags.length?"\nStichwörter: "+g.tags.join(", "):"");
   }).join("\n\n")+"\n\nAus: Homöopathie Nachschlagewerk";
 }
 function shareOut(title,text){
@@ -930,17 +1099,6 @@ function addHl(){
   hlSave();SELP=null;window.getSelection().removeAllRanges();hideSelBar();renderReader();renderEx();
   toast("Markiert. Unter „Merkliste“ finden Sie Ihre Auszüge.");
 }
-function renderEx(){
-  var box=document.getElementById("exList");if(!box)return;
-  var gs=groupsOf().sort(function(a,b){return b.ts-a.ts});
-  document.getElementById("exTools").hidden=!gs.length;
-  if(!gs.length){box.innerHTML='<div class="empty">Noch keine Auszüge. Markieren Sie im Lesen einen Text mit dem Finger und tippen Sie auf „Markieren“.</div>';return}
-  box.innerHTML=gs.map(function(g){
-    var sec=secByKey(g.k);if(!sec)return"";
-    return '<div class="row"><div class="hit" data-w="'+sec.w+'" data-s="'+sec.i+'" data-p="'+g.items[0].p+'"><div class="hit-h"><b>'+esc(secName(sec))+'</b><em>'+esc(secCap(sec))+'</em></div><p><mark class="hlu">'+esc(g.items.map(function(x){return x.t}).join(" … "))+'</mark></p></div><div class="exbtn"><button class="rm" data-exshare="'+g.g+'">Teilen</button><button class="rm" data-exrm="'+g.g+'">Entfernen</button></div></div>';
-  }).join("");
-}
-
 /* Merkliste */
 function renderBm(){
   $("#bmCount").textContent=S.bm.length?"("+S.bm.length+")":"";
@@ -1100,7 +1258,8 @@ function show(v){
   if(VIEWS.indexOf(v)<0)v="suchen";
   VIEWS.forEach(function(n){$("#v-"+n).hidden=n!==v});
   document.querySelectorAll("#tabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.v===v)});
-  if(v==="lesen")renderReader();
+  if(v==="lesen"){renderReader();renderRecent()}
+  if(v==="vergleich")renderCompare();
   if(v==="klinik")kSearch();
   if(v==="arz")renderArz();
   if(v==="merkliste")renderBm();
@@ -1203,6 +1362,7 @@ $("#sort").addEventListener("change",function(e){S.sort=e.target.value;doSearch(
 $("#variants").addEventListener("click",function(e){var b=e.target.closest("[data-var]");if(!b)return;S.variant=S.variant===b.dataset.var?null:b.dataset.var;doSearch()});
 $("#results").addEventListener("click",function(e){
   if(e.target.id==="moreBtn"){S.shown+=30;renderResults();return}
+  var dm=e.target.closest("[data-dym]");if(dm){$("#q").value=dm.dataset.dym;S.q=dm.dataset.dym;S.variant=null;addHist(S.q);doSearch();return}
   var card=e.target.closest(".hit");if(!card)return;
   var tgt=e.target.closest("[data-pi]");
   openSection(+card.dataset.w,+card.dataset.s,true,tgt?+tgt.dataset.pi:undefined);
@@ -1213,8 +1373,9 @@ $("#bmList").addEventListener("click",function(e){
   var c=e.target.closest(".hit");if(c)openSection(+c.dataset.w,+c.dataset.s,false);
 });
 $("#toc").addEventListener("click",function(e){var b=e.target.closest("button");if(b&&b.dataset.clarke){AA.aut="cl";AA.cur=null;AA.q="";$("#toc").hidden=true;$("#tocBtn").setAttribute("aria-expanded","false");location.hash="arz";window.scrollTo(0,0);return}if(b&&b.dataset.lib){loadWork(b.dataset.lib,function(wi){openSection(wi,0,false)});$("#toc").hidden=true;$("#tocBtn").setAttribute("aria-expanded","false");return}if(b){$("#toc").hidden=true;$("#tocBtn").setAttribute("aria-expanded","false");openSection(+b.dataset.w,+b.dataset.s,false)}});
+$("#recent").addEventListener("click",function(e){var b=e.target.closest("[data-rc]");if(b)continueRecent($("#recent")._i[+b.dataset.rc])});
 $("#tocBtn").addEventListener("click",function(){var t=$("#toc");t.hidden=!t.hidden;this.setAttribute("aria-expanded",String(!t.hidden));this.textContent="📚 Literaturauswahl "+(t.hidden?"▾":"▴")});
-function step(d){var n=S.cur.s+d,max=WORKS[S.cur.w].sections.length-1;if(n<0||n>max)return;S.hl=false;S.cur.s=n;S.chunk=0;S.focus=0;renderReader();window.scrollTo(0,0)}
+function step(d){var n=S.cur.s+d,max=WORKS[S.cur.w].sections.length-1;if(n<0||n>max)return;S.hl=false;S.cur.s=n;S.chunk=0;S.focus=0;addRecent(curSec());renderReader();window.scrollTo(0,0)}
 /* Wischen zum Blättern: links = weiter, rechts = zurück */
 (function(){
   var x0=0,y0=0,t0=0,ok=false,rd=document.getElementById("reader");
@@ -1252,6 +1413,7 @@ $("#reader").addEventListener("click",function(e){
   }
   if(t.id==="clearHl"){S.hl=false;renderReader()}
   if(t.id==="langSw"){var cs=curSec(),pi=boPair(cs);if(pi>-1)openSection(cs.w===3?4:3,pi,false);window.scrollTo(0,0)}
+  if(t.id==="toCmp"){openCompare(curSec().label.split(/[.,;(]/)[0].trim(),"");return}
   if(t.id==="toKlinik"){var ql=curSec().label.split(/[.,;(]/)[0].trim();$("#q").value=ql;S.q=ql;S.variant=null;location.hash="suchen";doSearch();window.scrollTo(0,0)}
   if(t.id==="nextHit")nextHit();
   if(t.classList.contains("chprev")){S.chunk--;S.focus=S.chunk*CH;renderReader();window.scrollTo(0,0)}
@@ -1453,10 +1615,16 @@ document.getElementById("reader").addEventListener("click",function(e){
 });
 document.getElementById("exList").addEventListener("click",function(e){
   var t=e.target,sh=t.closest("[data-exshare]"),rm=t.closest("[data-exrm]"),hit=t.closest(".hit");
+  var tr=t.closest("[data-extagrm]");if(tr){rmTag(tr.dataset.extagrm,tr.dataset.t);return}
+  if(t.closest(".tagin"))return;
   if(sh){var gr=groupsOf().filter(function(x){return x.g===sh.dataset.exshare});if(gr.length)shareOut("Auszug",excerptText(gr));return}
   if(rm){HL=HL.filter(function(x){return x.g!==rm.dataset.exrm});hlSave();renderEx();return}
   if(hit){openSection(+hit.dataset.w,+hit.dataset.s,false,+hit.dataset.p)}
 });
+document.getElementById("exList").addEventListener("keydown",function(e){var t=e.target;if(e.key==="Enter"&&t.classList&&t.classList.contains("tagin")){e.preventDefault();var v=t.value;t.value="";addTag(t.dataset.g,v)}});
+document.getElementById("exList").addEventListener("focusout",function(e){var t=e.target;if(t.classList&&t.classList.contains("tagin")&&t.value.trim()){var v=t.value;t.value="";setTimeout(function(){addTag(t.dataset.g,v)},0)}});
+document.getElementById("exQ").addEventListener("input",function(e){EXF.q=e.target.value;renderEx()});
+document.getElementById("exTagBar").addEventListener("click",function(e){var b=e.target.closest("[data-xt]");if(!b)return;EXF.tag=b.dataset.xt;renderEx()});
 document.getElementById("exShareAll").addEventListener("click",function(){var gs=groupsOf();if(gs.length)shareOut("Meine Auszüge",excerptText(gs))});
 document.getElementById("exCopyAll").addEventListener("click",function(){var gs=groupsOf();if(gs.length)toast(copyOut(excerptText(gs))?"Kopiert.":"Kopieren nicht möglich.")});
 document.getElementById("exFile").addEventListener("click",function(){var gs=groupsOf();if(gs.length)dlText("Meine Auszüge",excerptText(gs))});
@@ -1465,6 +1633,7 @@ renderEx();
 
 $("#foot").innerHTML="Eine Idee von <a href=\"https://autoknigge.de\" target=\"_blank\" rel=\"noopener\">autoknigge.de</a> · <a href=\"https://autoknigge.de/homoeopathie/datenschutz.html\" target=\"_blank\" rel=\"noopener\">Datenschutz</a> · <a href=\"https://autoknigge.de/impressum\" target=\"_blank\" rel=\"noopener\">Impressum</a> · <a href=\"#schreibweisen\">Schreibweisen</a><span id=\"adOpt\"></span>";
 try{if(window.HNAndroid&&HNAndroid.privacyOptionsRequired&&HNAndroid.privacyOptionsRequired()){var ao=document.getElementById("adOpt");ao.innerHTML=' · <a href="#" id="adOptL">Werbe-Einstellungen</a>';document.getElementById("adOptL").addEventListener("click",function(e){e.preventDefault();HNAndroid.showPrivacyOptions()})}}catch(e){}
+try{var r0=RECENT[0];if(r0){var sc0=secByKey(r0.k);if(sc0)S.cur={w:sc0.w,s:sc0.i}}}catch(e){}
 show(hashView());
 renderResults();
 
@@ -1473,22 +1642,25 @@ renderResults();
   var box=$("#sugg"),inp=$("#q");
   function hideS(){box.hidden=true;box.innerHTML=""}
   function suggest(q){
+    if(!q.trim()){var hl=HIST.slice(0,8).map(function(t){return {t:t,k:"Verlauf",pre:""}});if(hl.length)hl.push({t:"Verlauf löschen",k:"✕",pre:"",clear:true});return hl}
     var m=q.match(/(\S+)$/);if(!m||!READY)return [];
     var last=m[1],pre=q.slice(0,q.length-last.length),nl=norm(last);
     if(nl.length<2)return [];
     var out=[],seen={};
     function add(t,k){var key=norm(t);if(seen[key])return;seen[key]=1;out.push({t:t,k:k,pre:pre})}
+    var nq=norm(q.trim());HIST.filter(function(x){return norm(x).indexOf(nq)===0&&norm(x)!==nq}).slice(0,3).forEach(function(x){var key=norm(x);seen[key]=1;out.push({t:x,k:"Verlauf",pre:""})});
+    var hn=out.length;
     var rem=[];
     CL.forEach(function(r){var i=-1;for(var j=0;j<r.nn.length;j++)if(r.nn[j].indexOf(nl)===0){i=j;break}if(i>-1)rem.push({n:r.n,i:i})});
     rem.sort(function(a,b){return a.i-b.i||a.n.length-b.n.length||a.n.localeCompare(b.n,"de")});
     SYN.forEach(function(g){for(var j=1;j<g.length;j++){var w=norm(g[j]);if(w.length<=9&&w.indexOf(nl)===0){add(g[0],MEDSET[g[0].toLowerCase()]?"Begriff":"Arznei");break}}});
     rem.slice(0,5).forEach(function(r){add(r.n,"Arznei")});
-    var rem5=out.slice(0,6);out=rem5;
+    var rem5=out.slice(0,hn+6);out=rem5;
     var terms=[];
     for(var i=0;i<VN.length;i++){var w=VN[i];if(w.length>=6&&w.indexOf(nl)===0&&!/\d/.test(w))terms.push(i)}
     terms.sort(function(a,b){return VF[b]-VF[a]});
     terms.slice(0,6).forEach(function(i){add(VL[i],"Wort")});
-    return out.slice(0,10);
+    return out.slice(0,hn+10);
   }
   function show(){
     var list=suggest(inp.value);
@@ -1499,12 +1671,14 @@ renderResults();
   inp.addEventListener("input",show);
   inp.addEventListener("focus",show);
   inp.addEventListener("blur",function(){setTimeout(hideS,180)});
-  inp.addEventListener("keydown",function(e){if(e.key==="Enter")hideS()});
+  inp.addEventListener("keydown",function(e){if(e.key==="Enter"){hideS();addHist(inp.value)}});
+  inp.addEventListener("input",function(){clearTimeout(histTimer);histTimer=setTimeout(function(){if(S.results&&S.results.length)addHist(inp.value)},2500)});
   box.addEventListener("pointerdown",function(e){e.preventDefault()});
   box.addEventListener("click",function(e){
     var b=e.target.closest("button[data-i]");if(!b)return;
     var x=box._l[+b.dataset.i],v=x.pre+x.t;
-    inp.value=v;S.q=v;S.variant=null;hideS();doSearch();
+    if(x.clear){HIST=[];lsSet("hn.hist",HIST);hideS();return}
+    inp.value=v;S.q=v;S.variant=null;hideS();addHist(v);doSearch();
   });
 })();
 setTimeout(function(){

@@ -210,8 +210,8 @@ mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor
     </details>
     <p class="hint">Mehrere Wörter müssen im selben Abschnitt vorkommen. In Anführungszeichen („Reine Arznei“) suchen Sie eine feste Wortfolge.</p>
     <div id="variants"></div>
-    <div id="kres" aria-live="polite"></div>
     <div id="results" aria-live="polite"></div>
+    <div id="kres" aria-live="polite"></div>
   </section>
 
   <section id="v-arz" hidden>
@@ -1088,7 +1088,7 @@ function kSearch(){
     });
     if(rids.length>KS.shown)html+='<p style="margin-top:1rem"><button class="btn" id="kmore">Weitere '+Math.min(40,rids.length-KS.shown)+' anzeigen ('+(rids.length-KS.shown)+' übrig)</button></p>';
   }
-  box.innerHTML=html?'<details class="kl" open><summary>Klinik-Verzeichnis (Clarke): '+(rids.length?rids.length+' Arzneien bei „'+esc(q)+'“':'Arznei „'+esc(q)+'“')+'</summary>'+html+'</details>':"";
+  box.innerHTML=html?'<details class="kl"><summary>Klinik-Verzeichnis (Clarke): '+(rids.length?rids.length+' Arzneien bei „'+esc(q)+'“':'Arznei „'+esc(q)+'“')+'</summary>'+html+'</details>':"";
 }
 function kRun(){KS.shown=40;kSearch()}
 

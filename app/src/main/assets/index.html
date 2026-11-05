@@ -748,7 +748,8 @@ function boPair(sec){var o=WORKS[sec.w===3?4:3].sections;for(var i=0;i<o.length;
 function curSec(){return WORKS[S.cur.w].sections[S.cur.s]}
 var TOCOPEN={};
 function buildToc(){
-  var h='<p style="margin:0 0 .6rem"><button class="btn" data-clarke="1" style="width:100%;text-align:left;padding:.7rem 1rem"><b>Clarke · Arzneimittellehre</b> <small>('+CL.length+' Arzneien, Klinik-Verzeichnis) ›</small></button></p>';
+  var h="";
+  var clBtn='<p style="margin:0 0 .6rem"><button class="btn" data-clarke="1" style="width:100%;text-align:left;padding:.7rem 1rem"><b>Clarke · Arzneimittellehre</b> <small>('+CL.length+' Arzneien, Klinik-Verzeichnis) ›</small></button></p>';
   WORKS.forEach(function(w,wi){
     h+='<details class="tocw" data-tw="'+wi+'"'+(TOCOPEN[wi]?' open':'')+'><summary><b>'+esc(w.title)+'</b> <small>('+w.sections.length+')</small></summary>';
     var groups=[],map={};
@@ -764,6 +765,7 @@ function buildToc(){
     });
     h+='</details>';
   });
+  h+=clBtn;
   var rest=LIB.filter(function(l){return workIdx(l.id)<0});
   if(rest.length)h+='<p class="hint" style="margin:.8rem 0 .3rem">Noch nicht geladen – antippen zum Laden (einmalig):</p><div class="wide">'+rest.map(function(l){return '<button data-lib="'+l.id+'">'+esc(l.short)+' ('+l.mb+' MB)</button>'}).join("")+'</div>';
   $("#toc").innerHTML=h;
@@ -1135,7 +1137,7 @@ $("#q").addEventListener("input",function(e){S.q=e.target.value;S.variant=null;c
 ["Kopf","Geist, Gemüt","Augen","Ohren","Nase","Gesicht","Mund","Zunge","Innerer Hals","Magen","Abdomen","Rektum","Stuhlgang","Urin","Harnwege","Männl. Gen","Weibl. Gen.","Atemwege","Brust","Herz","Rücken","Extremitäten","Haut","Schlaf","Fieber","Appetit","Modalitäten","Antidot","Vergleichen","Ergänzung","Dosierung"].forEach(function(x){var o=document.createElement("option");o.value=x;o.textContent=x;$("#region").appendChild(o)});
 $("#region").addEventListener("change",function(e){S.region=e.target.value;doSearch()});
 $("#equiv").addEventListener("change",function(e){S.equiv=e.target.checked;S.variant=null;doSearch()});
-var LIT=[["cl","Clarke (Klinik-Verzeichnis)"],["org","Hahnemann: Organon"],["chr","Hahnemann: Chron. Krankheiten"],["arz","Hahnemann: nur Arzneien (Bd. 2–5)"],["bo","Boericke"],["bog","Boger (englisch)"],["bgd","Boger (deutsch)"]];
+var LIT=[["org","Hahnemann: Organon"],["chr","Hahnemann: Chron. Krankheiten"],["arz","Hahnemann: nur Arzneien (Bd. 2–5)"],["bo","Boericke"],["bog","Boger (englisch)"],["bgd","Boger (deutsch)"],["cl","Clarke (Klinik-Verzeichnis)"]];
 var ORD=lsGet("hn.ord",[]);
 function litAll(){
   var a=LIT.concat(LIB.map(function(l){return [l.id,l.short]})),pos={};

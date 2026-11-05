@@ -195,12 +195,10 @@ mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor
 
 <main class="wrap">
   <section id="v-suchen">
-    <h2>In allen Werken suchen</h2>
-    <p class="lead">Ein Suchfeld für alles: Arzneien, Beschwerden und Begriffe. Alte Schreibweisen, Fachwörter und gleichbedeutende Wörter werden mitgefunden (zum Beispiel „Nasenbluten“ und „Epistaxis“).</p>
     <div class="searchbox"><input id="q" type="search" enterkeyhint="search" placeholder="Suchwort, z. B. Lebenskraft" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Suchbegriff"></div>
     <details class="optd"><summary>📚 Literaturauswahl und Optionen</summary>
     <div class="opts">
-      <label><input type="checkbox" id="equiv" checked> Alte und neue Schreibweise gleichsetzen</label>
+      <label hidden><input type="checkbox" id="equiv" checked> Alte und neue Schreibweise gleichsetzen</label>
       <div class="lit"><span class="litl">Literatur <small>(Mehrfachauswahl. Gedrückt halten und verschieben ändert die Reihenfolge der Ergebnisse.)</small></span>
         <div class="chips" id="scope" role="group" aria-label="Literatur"></div></div>
       <label>Bereich bei Boericke
@@ -510,7 +508,7 @@ function matchSynPhrase(toks,words){
   return res;
 }
 
-var VIEWS=["suchen","lesen","merkliste","schreibweisen"];
+var VIEWS=["suchen","arz","lesen","merkliste","schreibweisen"];
 var CH=120;
 var S={q:"Arznei",equiv:true,syn:true,region:"",expanded:"",scope:[],sort:"hits",variant:null,shown:30,hl:false,
   cur:lsGet("hn.cur",{w:0,s:3}),chunk:0,focus:0,fs:lsGet("hn.fs",1),bm:lsGet("hn.bm",[]),terms:[],results:null,variantList:[],any:null};
@@ -748,7 +746,7 @@ function boPair(sec){var o=WORKS[sec.w===3?4:3].sections;for(var i=0;i<o.length;
 function curSec(){return WORKS[S.cur.w].sections[S.cur.s]}
 var TOCOPEN={};
 function buildToc(){
-  var h="";
+  var h='<p style="margin:0 0 .6rem"><button class="btn" data-clarke="1" style="width:100%;text-align:left;padding:.7rem 1rem"><b>Clarke · Arzneimittellehre</b> <small>('+CL.length+' Arzneien, Klinik-Verzeichnis) ›</small></button></p>';
   WORKS.forEach(function(w,wi){
     h+='<details class="tocw" data-tw="'+wi+'"'+(TOCOPEN[wi]?' open':'')+'><summary><b>'+esc(w.title)+'</b> <small>('+w.sections.length+')</small></summary>';
     var groups=[],map={};
@@ -1059,7 +1057,7 @@ function kSearch(){
     names.slice(0,6).forEach(function(r){
       var key="n"+CL.indexOf(r);
       html+='<div class="kcard"><h3>'+esc(r.n)+'</h3><p class="meta">'+r.k.length+(r.k.length===1?" Beschwerde":" Beschwerden")+' bei Clarke</p>'+kChips(r,40,key)+
-        '<p class="klink"><button class="btn" data-ms="'+esc(r.n)+'">In allen Texten suchen</button>'+(boSec(r)?' <button class="btn" data-bo="'+boSec(r).i+'">Bei Boericke lesen</button>':"")+'</p></div>';
+        '<p class="klink"><button class="btn" data-clr="'+CL.indexOf(r)+'">Bei Clarke lesen</button> <button class="btn" data-ms="'+esc(r.n)+'">In allen Texten suchen</button>'+(boSec(r)?' <button class="btn" data-bo="'+boSec(r).i+'">Bei Boericke lesen</button>':"")+'</p></div>';
     });
     if(names.length>6)html+='<p class="hint">und '+(names.length-6)+' weitere. Geben Sie mehr vom Namen ein, um einzugrenzen.</p>';
   }
@@ -1204,7 +1202,7 @@ $("#bmList").addEventListener("click",function(e){
   if(rm){S.bm=S.bm.filter(function(k){return k!==rm.dataset.rm});lsSet("hn.bm",S.bm);renderBm();return}
   var c=e.target.closest(".hit");if(c)openSection(+c.dataset.w,+c.dataset.s,false);
 });
-$("#toc").addEventListener("click",function(e){var b=e.target.closest("button");if(b&&b.dataset.lib){loadWork(b.dataset.lib,function(wi){openSection(wi,0,false)});$("#toc").hidden=true;$("#tocBtn").setAttribute("aria-expanded","false");return}if(b){$("#toc").hidden=true;$("#tocBtn").setAttribute("aria-expanded","false");openSection(+b.dataset.w,+b.dataset.s,false)}});
+$("#toc").addEventListener("click",function(e){var b=e.target.closest("button");if(b&&b.dataset.clarke){AA.aut="cl";AA.cur=null;AA.q="";$("#toc").hidden=true;$("#tocBtn").setAttribute("aria-expanded","false");location.hash="arz";window.scrollTo(0,0);return}if(b&&b.dataset.lib){loadWork(b.dataset.lib,function(wi){openSection(wi,0,false)});$("#toc").hidden=true;$("#tocBtn").setAttribute("aria-expanded","false");return}if(b){$("#toc").hidden=true;$("#tocBtn").setAttribute("aria-expanded","false");openSection(+b.dataset.w,+b.dataset.s,false)}});
 $("#tocBtn").addEventListener("click",function(){var t=$("#toc");t.hidden=!t.hidden;this.setAttribute("aria-expanded",String(!t.hidden));this.textContent="📚 Literaturauswahl "+(t.hidden?"▾":"▴")});
 function step(d){var n=S.cur.s+d,max=WORKS[S.cur.w].sections.length-1;if(n<0||n>max)return;S.hl=false;S.cur.s=n;S.chunk=0;S.focus=0;renderReader();window.scrollTo(0,0)}
 /* Wischen zum Blättern: links = weiter, rechts = zurück */
@@ -1263,6 +1261,7 @@ var kt=null;
 $("#kq").addEventListener("input",function(e){KS.q=e.target.value;clearTimeout(kt);kt=setTimeout(kRun,160)});
 $("#kres").addEventListener("click",function(e){
   var t=e.target.closest("button");if(!t)return;
+  if(t.dataset.clr!==undefined){AA.aut="cl";AA.cur=null;location.hash="arz";show("arz");readClarke(+t.dataset.clr);return}
   if(t.dataset.kq!==undefined){$("#q").value=t.dataset.kq;S.q=t.dataset.kq;S.variant=null;if(location.hash!=="#suchen")location.hash="suchen";doSearch();window.scrollTo(0,0)}
   else if(t.dataset.kall!==undefined){KS.open[t.dataset.kall]=true;kSearch()}
   else if(t.dataset.ms!==undefined){var w=t.dataset.ms;$("#q").value=w;S.q=w;S.variant=null;location.hash="suchen";doSearch();window.scrollTo(0,0)}

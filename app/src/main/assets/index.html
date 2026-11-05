@@ -1510,8 +1510,9 @@ setTimeout(function(){
   buildIndex(0);READY=true;
   doSearch();
   (function(){
-    var pend=S.scope.filter(function(k){return LIB.some(function(l){return l.id===k})&&workIdx(k)<0});
-    (function nxt(){var id=pend.shift();if(!id){doSearch();return}loadWork(id,function(){nxt()})})();
+    /* alle Werke im Hintergrund laden, kleine zuerst */
+    var pend=LIB.slice().sort(function(x,y){return x.mb-y.mb}).map(function(l){return l.id}).filter(function(k){return workIdx(k)<0});
+    (function nxt(){var id=pend.shift();if(!id){doSearch();return}loadWork(id,function(){if(S.q.trim())doSearch();setTimeout(nxt,30)})})();
   })();
   if(hashView()==="lesen")renderReader();
   if(hashView()==="schreibweisen")renderVar();

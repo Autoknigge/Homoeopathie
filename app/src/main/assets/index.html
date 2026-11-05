@@ -50,6 +50,7 @@ details.tocw{border-bottom:1px solid var(--line);padding:.15rem 0}details.tocw>s
 details.kl{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:.2rem .8rem .6rem;margin:1rem 0}details.kl>summary{cursor:pointer;padding:.6rem 0;font-weight:700;color:var(--teal)}
 .chip{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.chip.drag{outline:2px solid var(--accent);transform:scale(1.07);box-shadow:0 4px 14px rgba(0,0,0,.35);position:relative;z-index:5}
 details.optd{margin:.8rem 0 .2rem}details.optd>summary{cursor:pointer;display:block;text-align:center;padding:.7rem 1rem;border-radius:8px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--fg);font-weight:700;list-style:none}details.optd>summary::-webkit-details-marker{display:none}
+.sugg{position:absolute;left:0;right:0;top:100%;z-index:30;margin-top:2px;background:var(--surface);border:1px solid var(--accent);border-radius:8px;box-shadow:0 8px 22px rgba(0,0,0,.28);overflow:hidden}.sugg button{display:flex;justify-content:space-between;gap:.6rem;width:100%;text-align:left;padding:.7rem .9rem;background:none;border:0;border-bottom:1px solid var(--line);font-size:1.02rem}.sugg button:last-child{border-bottom:0}.sugg button small{color:var(--muted);flex:none}.sugg button:active{background:var(--accent-soft)}
 main{padding-block:1.4rem 4rem}
 h2{font:700 1.25rem/1.3 var(--f-display);color:var(--teal);margin:0 0 .3rem;text-wrap:balance}
 .lead{color:var(--muted);margin:0 0 1rem;max-width:62ch}
@@ -195,15 +196,15 @@ mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor
 
 <main class="wrap">
   <section id="v-suchen">
-    <div class="searchbox"><input id="q" type="search" enterkeyhint="search" placeholder="Suchwort, z. B. Nasenbluten, sulph, Lebenskraft" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Suchbegriff"></div>
+    <div class="searchbox"><div id="sugg" class="sugg" hidden></div><input id="q" type="search" enterkeyhint="search" placeholder="Suchwort, z. B. Nasenbluten, sulph, Lebenskraft" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Suchbegriff"></div>
     <details class="optd"><summary>📚 Literaturauswahl und Optionen</summary>
     <div class="opts">
       <label hidden><input type="checkbox" id="equiv" checked> Alte und neue Schreibweise gleichsetzen</label>
       <div class="lit"><span class="litl">Literatur <small>(Mehrfachauswahl. Gedrückt halten und verschieben ändert die Reihenfolge der Ergebnisse.)</small></span>
         <div class="chips" id="scope" role="group" aria-label="Literatur"></div></div>
-      <label>Bereich bei Boericke
+      <label hidden>Bereich bei Boericke
         <select id="region"><option value="">Alle Abschnitte</option></select></label>
-      <label>Reihenfolge
+      <label hidden>Reihenfolge
         <select id="sort"><option value="hits">Meiste Treffer zuerst</option><option value="book">Wie im Buch</option></select></label>
     </div>
     </details>
@@ -463,7 +464,9 @@ var SYN=[
 ["Homöopathie","Homöopathik","Homoeopathie","Homöopathisch"]
 ];
 
+var MEDSET={};
 SYN=SYN.concat([["Nasenbluten", "Nasenblutung", "Epistaxis", "Nasenblut", "Bluten aus der Nase", "Blutfluss aus der Nase", "Nasen-Bluten"], ["Schlaflosigkeit", "schlaflos", "Agrypnie", "Insomnie", "Insomnia", "Nicht schlafen können", "Schlafmangel"], ["Durchfall", "Durchfälle", "Diarrhoe", "Diarrhö", "Diarrhöe", "Diarrhea", "Durchlauf", "Laxieren", "Flüssiger Stuhl", "Dünner Stuhl"], ["Verstopfung", "Obstipation", "Stuhlverhaltung", "Leibesverstopfung", "Hartleibigkeit", "Stuhlverstopfung", "Constipation"], ["Erbrechen", "Emesis", "Vomitus", "Erbrechen von Speisen"], ["Übelkeit", "Nausea", "Brecherlichkeit", "Uebelkeit", "Übelkeiten"], ["Kopfschmerz", "Kopfschmerzen", "Kopfweh", "Cephalalgie", "Kopfwehe", "Kopfleiden"], ["Migräne", "Migraene", "Hemikranie", "Halbseitiger Kopfschmerz"], ["Husten", "Tussis", "Hüsteln"], ["Bluthusten", "Hämoptoe", "Haemoptoe", "Haemoptysis", "Hämoptyse", "Blutspeien", "Blutauswurf"], ["Bluterbrechen", "Hämatemesis", "Haematemesis", "Blutbrechen"], ["Schwindel", "Vertigo", "Schwindelanfälle", "Schwindligkeit", "Drehschwindel"], ["Ohnmacht", "Synkope", "Bewusstlosigkeit", "Besinnungslosigkeit", "Ohnmachten", "Ohnmächtig"], ["Fieber", "Febris", "Fieberhitze", "Fieberanfall"], ["Schüttelfrost", "Frostschauder", "Fieberfrost", "Schauder"], ["Schweiß", "Schweiss", "Hidrosis", "Transpiration", "Nachtschweiß", "Nachtschweiss"], ["Sodbrennen", "Pyrosis", "Saures Aufstoßen", "Saures Aufstossen"], ["Aufstoßen", "Aufstossen", "Rülpsen", "Ructus"], ["Blähungen", "Blähung", "Flatulenz", "Flatus", "Blähsucht"], ["Zahnschmerz", "Zahnschmerzen", "Zahnweh", "Odontalgie", "Zahnwehe"], ["Ohrenschmerz", "Ohrenschmerzen", "Ohrenweh", "Otalgie", "Ohrenzwang"], ["Schnupfen", "Coryza", "Rhinitis", "Nasenkatarrh", "Stockschnupfen"], ["Halsentzündung", "Halsweh", "Rachenentzündung", "Pharyngitis", "Halsschmerzen", "Angina"], ["Hautausschlag", "Hautausschläge", "Exanthem", "Ausschlag", "Eruption", "Eruptionen"], ["Juckreiz", "Pruritus", "Hautjucken", "Jucken"], ["Wassersucht", "Hydrops", "Ödem", "Oedem", "Ascites"], ["Gelbsucht", "Ikterus", "Icterus", "Gallsucht"], ["Harnverhaltung", "Ischurie", "Urinverhaltung"], ["Harnzwang", "Strangurie", "Blasenzwang", "Harndrang"], ["Bettnässen", "Enuresis", "Einnässen", "Bettpissen"], ["Gicht", "Podagra", "Chiragra", "Gichtleiden"], ["Rheumatismus", "Rheuma", "Rheumatisch", "Gliederreißen", "Gliederreissen"], ["Krampf", "Krämpfe", "Spasmus", "Spasmen", "Konvulsionen", "Convulsionen"], ["Epilepsie", "Fallsucht", "Epileptisch", "Fallende Sucht"], ["Lähmung", "Lähmungen", "Paralyse", "Paralysis"], ["Schlagfluss", "Apoplexie", "Schlaganfall", "Hirnschlag"], ["Hämorrhoiden", "Haemorrhoiden", "Hämorriden", "Goldader", "Afterblutknoten", "Blutknoten", "Goldaderfluss"], ["Atemnot", "Asthma", "Engbrüstigkeit", "Dyspnoe", "Kurzatmigkeit", "Kurzäthmigkeit", "Brustbeklemmung", "Beengung der Brust"], ["Herzklopfen", "Palpitation", "Palpitatio", "Herzpochen"], ["Lungenentzündung", "Pneumonie", "Pneumonia"], ["Brustfellentzündung", "Pleuritis", "Rippenfellentzündung"], ["Entzündung", "Inflammation", "Phlogose"], ["Geschwür", "Geschwüre", "Ulcus", "Ulcera", "Schwär"], ["Abszess", "Abscess", "Eiterbeule", "Apostem", "Eitergeschwulst"], ["Krebs", "Karzinom", "Carcinom", "Carcinoma", "Cancer"], ["Weißfluss", "Weissfluss", "Leukorrhoe", "Leukorrhö", "Fluor albus", "Weißer Fluss"], ["Menstruation", "Monatsfluss", "Menses", "Monatliche Reinigung", "Katamenien", "Monatsblutung"], ["Amenorrhoe", "Amenorrhö", "Amenorrhea", "Unterdrückte Regel"], ["Schwangerschaft", "Gravidität", "Graviditas"], ["Geburt", "Entbindung", "Niederkunft", "Partus", "Geburtswehen"], ["Milchmangel", "Agalaktie", "Agalactie"], ["Neuralgie", "Neuralgien", "Nervenschmerz", "Nervenschmerzen"], ["Ischias", "Ischialgie", "Hüftweh", "Hüftschmerz"], ["Rückenschmerz", "Rückenschmerzen", "Rückenweh", "Lumbago", "Hexenschuss", "Kreuzschmerz", "Kreuzschmerzen", "Kreuzweh"], ["Augenentzündung", "Ophthalmie", "Ophthalmia", "Bindehautentzündung", "Konjunktivitis"], ["Grauer Star", "Katarakt", "Cataracta"], ["Schielen", "Strabismus"], ["Taubheit", "Schwerhörigkeit", "Gehörlosigkeit", "Surditas", "Harthörigkeit"], ["Ohrensausen", "Tinnitus", "Ohrenklingen", "Ohrenbrausen", "Sausen in den Ohren"], ["Heiserkeit", "Raucedo", "Stimmlosigkeit"], ["Keuchhusten", "Pertussis", "Stickhusten", "Kinkhusten"], ["Masern", "Morbilli"], ["Scharlach", "Scarlatina", "Scharlachfieber"], ["Pocken", "Variola", "Blattern"], ["Windpocken", "Varizellen", "Varicellen"], ["Diphtherie", "Diphtheritis", "Häutige Bräune", "Croup", "Krupp"], ["Typhus", "Nervenfieber", "Typhös", "Faulfieber"], ["Wechselfieber", "Malaria", "Intermittens", "Sumpffieber"], ["Cholera", "Brechruhr"], ["Ruhr", "Dysenterie", "Dysenteria", "Blutruhr"], ["Schwindsucht", "Lungenschwindsucht", "Phthisis", "Tuberkulose", "Tuberculose", "Lungensucht", "Auszehrung"], ["Abmagerung", "Marasmus", "Atrophie", "Abzehrung"], ["Skrofeln", "Skrophulose", "Scrofulose", "Skrofulose", "Drüsenkrankheit"], ["Rachitis", "Englische Krankheit", "Rhachitis"], ["Warzen", "Warze", "Verrucae"], ["Hühneraugen", "Leichdorn", "Clavus"], ["Frostbeulen", "Pernio", "Perniones"], ["Verbrennung", "Verbrennungen", "Brandwunden", "Combustio"], ["Wunde", "Wunden", "Verwundung", "Verletzung", "Verletzungen"], ["Quetschung", "Quetschungen", "Kontusion", "Contusion", "Prellung"], ["Knochenbruch", "Knochenbrüche", "Fraktur", "Beinbruch"], ["Verstauchung", "Distorsion", "Verrenkung", "Luxation"], ["Vergiftung", "Intoxikation"], ["Kolik", "Leibschmerzen", "Bauchweh", "Bauchschmerzen", "Bauchschmerz", "Leibweh", "Leibschneiden", "Bauchgrimmen", "Grimmen"], ["Magenschmerz", "Magenschmerzen", "Magenweh", "Gastralgie", "Magenkrampf", "Cardialgie"], ["Magenentzündung", "Gastritis"], ["Appetitlosigkeit", "Anorexie", "Appetitmangel", "Anorexia"], ["Heißhunger", "Heisshunger", "Bulimie", "Fresssucht"], ["Gedächtnisschwäche", "Vergesslichkeit", "Gedächtnismangel", "Amnesie", "Gedächtnisverlust", "Gedächtnissschwäche", "Gedächtnissmangel"], ["Traurigkeit", "Melancholie", "Schwermut", "Niedergeschlagenheit", "Depression", "Trübsinn", "Gemüthsverstimmung"], ["Angst", "Ängstlichkeit", "Aengstlichkeit", "Beängstigung", "Beängstigungen"], ["Reizbarkeit", "Gereiztheit", "Reizbar", "Irritabilität"], ["Wahnsinn", "Geisteskrankheit", "Irrsinn", "Tobsucht", "Manie", "Geistesstörung"], ["Delirium", "Fieberwahn", "Irrereden", "Phantasiren"], ["Müdigkeit", "Mattigkeit", "Abgeschlagenheit", "Erschöpfung", "Ermüdung", "Kraftlosigkeit"], ["Zittern", "Tremor", "Zitterbewegung"], ["Gefühllosigkeit", "Pelzigkeit", "Taubsein", "Eingeschlafenheit"], ["Blutarmut", "Anämie", "Anaemie", "Bleichsucht", "Chlorose", "Blutmangel"], ["Blutung", "Blutungen", "Hämorrhagie", "Haemorrhagie", "Blutfluss"], ["Nierenentzündung", "Nephritis", "Nierenleiden"], ["Blasenentzündung", "Zystitis", "Cystitis", "Blasenkatarrh"], ["Nierenstein", "Nierensteine", "Nierenkolik", "Nierengries", "Blasenstein", "Steinleiden", "Lithiasis", "Gries"], ["Gallenstein", "Gallensteine", "Gallenkolik", "Cholelithiasis"], ["Leberentzündung", "Hepatitis", "Leberleiden", "Leberkrankheit"], ["Mandelentzündung", "Tonsillitis", "Halsmandeln"], ["Zahnen", "Dentition", "Zahnungsbeschwerden", "Zahndurchbruch"], ["Hernie", "Leistenbruch", "Eingeweidebruch", "Nabelbruch"], ["Krampfadern", "Varizen", "Varicen", "Aderknoten", "Venenerweiterung"], ["Kopfgrind", "Milchschorf", "Grind", "Schorf", "Crusta lactea"], ["Flechte", "Flechten", "Herpes", "Ekzem", "Eczem", "Salzfluss"], ["Nesselausschlag", "Urticaria", "Nesselsucht", "Nesselfieber", "Quaddeln"], ["Rotlauf", "Erysipel", "Erysipelas", "Wundrose"], ["Furunkel", "Blutschwär", "Blutschwaer", "Furunculus"], ["Akne", "Acne", "Finnen", "Gesichtsfinnen", "Mitesser"], ["Haarausfall", "Alopezie", "Alopecie", "Kahlheit"], ["Schlafwandeln", "Somnambulismus", "Nachtwandeln"], ["Zähneknirschen", "Bruxismus"], ["Stottern", "Stammeln", "Sprachfehler", "Balbuties"]]);
+SYN.slice(SYN.length-118).forEach(function(g){MEDSET[g[0].toLowerCase()]=1});
 function headW(l){return wordsOf(String(l).split(/[.,;:(\u2013\u2014]/)[0])}
 function wordsOf(e){return (e.match(new RegExp(WORD,"g"))||[]).map(norm)}
 (function(){
@@ -1150,11 +1153,13 @@ function wRank(sec){
   return 999;
 }
 function renderLit(){
+  lsSet("hn.scope",S.scope);
   $("#scope").innerHTML='<button class="chip" data-lit="" aria-pressed="'+(S.scope.length===0)+'">Alle</button>'+
     litAll().map(function(l){
       var lb=LIB.filter(function(x){return x.id===l[0]})[0],on=!lb||workIdx(lb.id)>-1;
       return '<button class="chip" data-lit="'+l[0]+'" aria-pressed="'+(S.scope.indexOf(l[0])>-1)+'">'+esc(l[1])+(on?"":' <small>⬇ '+lb.mb+' MB</small>')+'</button>'}).join("");
 }
+(function(){var ok={};litAll().forEach(function(x){ok[x[0]]=1});S.scope=lsGet("hn.scope",[]).filter(function(k){return ok[k]})})();
 renderLit();
 /* Werke per Gedrückthalten und Verschieben umsortieren (wird gespeichert) */
 (function(){
@@ -1461,9 +1466,53 @@ $("#foot").innerHTML="Eine Idee von <a href=\"https://autoknigge.de\" target=\"_
 try{if(window.HNAndroid&&HNAndroid.privacyOptionsRequired&&HNAndroid.privacyOptionsRequired()){var ao=document.getElementById("adOpt");ao.innerHTML=' · <a href="#" id="adOptL">Werbe-Einstellungen</a>';document.getElementById("adOptL").addEventListener("click",function(e){e.preventDefault();HNAndroid.showPrivacyOptions()})}}catch(e){}
 show(hashView());
 renderResults();
+
+/* Vorschläge beim Tippen */
+(function(){
+  var box=$("#sugg"),inp=$("#q");
+  function hideS(){box.hidden=true;box.innerHTML=""}
+  function suggest(q){
+    var m=q.match(/(\S+)$/);if(!m||!READY)return [];
+    var last=m[1],pre=q.slice(0,q.length-last.length),nl=norm(last);
+    if(nl.length<2)return [];
+    var out=[],seen={};
+    function add(t,k){var key=norm(t);if(seen[key])return;seen[key]=1;out.push({t:t,k:k,pre:pre})}
+    var rem=[];
+    CL.forEach(function(r){var i=-1;for(var j=0;j<r.nn.length;j++)if(r.nn[j].indexOf(nl)===0){i=j;break}if(i>-1)rem.push({n:r.n,i:i})});
+    rem.sort(function(a,b){return a.i-b.i||a.n.length-b.n.length||a.n.localeCompare(b.n,"de")});
+    SYN.forEach(function(g){for(var j=1;j<g.length;j++){var w=norm(g[j]);if(w.length<=9&&w.indexOf(nl)===0){add(g[0],MEDSET[g[0].toLowerCase()]?"Begriff":"Arznei");break}}});
+    rem.slice(0,5).forEach(function(r){add(r.n,"Arznei")});
+    var rem5=out.slice(0,6);out=rem5;
+    var terms=[];
+    for(var i=0;i<VN.length;i++){var w=VN[i];if(w.length>=6&&w.indexOf(nl)===0&&!/\d/.test(w))terms.push(i)}
+    terms.sort(function(a,b){return VF[b]-VF[a]});
+    terms.slice(0,6).forEach(function(i){add(VL[i],"Wort")});
+    return out.slice(0,10);
+  }
+  function show(){
+    var list=suggest(inp.value);
+    if(!list.length||document.activeElement!==inp){hideS();return}
+    box.innerHTML=list.map(function(x,i){return '<button type="button" data-i="'+i+'"><span>'+esc(x.pre+x.t)+'</span><small>'+x.k+'</small></button>'}).join("");
+    box._l=list;box.hidden=false;
+  }
+  inp.addEventListener("input",show);
+  inp.addEventListener("focus",show);
+  inp.addEventListener("blur",function(){setTimeout(hideS,180)});
+  inp.addEventListener("keydown",function(e){if(e.key==="Enter")hideS()});
+  box.addEventListener("pointerdown",function(e){e.preventDefault()});
+  box.addEventListener("click",function(e){
+    var b=e.target.closest("button[data-i]");if(!b)return;
+    var x=box._l[+b.dataset.i],v=x.pre+x.t;
+    inp.value=v;S.q=v;S.variant=null;hideS();doSearch();
+  });
+})();
 setTimeout(function(){
   buildIndex(0);READY=true;
   doSearch();
+  (function(){
+    var pend=S.scope.filter(function(k){return LIB.some(function(l){return l.id===k})&&workIdx(k)<0});
+    (function nxt(){var id=pend.shift();if(!id){doSearch();return}loadWork(id,function(){nxt()})})();
+  })();
   if(hashView()==="lesen")renderReader();
   if(hashView()==="schreibweisen")renderVar();
 },40);

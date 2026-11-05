@@ -195,7 +195,7 @@ mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor
 
 <main class="wrap">
   <section id="v-suchen">
-    <div class="searchbox"><input id="q" type="search" enterkeyhint="search" placeholder="Suchwort, z. B. Lebenskraft" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Suchbegriff"></div>
+    <div class="searchbox"><input id="q" type="search" enterkeyhint="search" placeholder="Suchwort, z. B. Nasenbluten, sulph, Lebenskraft" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Suchbegriff"></div>
     <details class="optd"><summary>📚 Literaturauswahl und Optionen</summary>
     <div class="opts">
       <label hidden><input type="checkbox" id="equiv" checked> Alte und neue Schreibweise gleichsetzen</label>
@@ -510,7 +510,7 @@ function matchSynPhrase(toks,words){
 
 var VIEWS=["suchen","arz","lesen","merkliste","schreibweisen"];
 var CH=120;
-var S={q:"Arznei",equiv:true,syn:true,region:"",expanded:"",scope:[],sort:"hits",variant:null,shown:30,hl:false,
+var S={q:"",equiv:true,syn:true,region:"",expanded:"",scope:[],sort:"hits",variant:null,shown:30,hl:false,
   cur:lsGet("hn.cur",{w:0,s:3}),chunk:0,focus:0,fs:lsGet("hn.fs",1),bm:lsGet("hn.bm",[]),terms:[],results:null,variantList:[],any:null};
 if(!WORKS[S.cur.w]||!WORKS[S.cur.w].sections[S.cur.s]){S.cur={w:0,s:3}}
 

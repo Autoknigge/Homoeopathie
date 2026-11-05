@@ -47,6 +47,9 @@ header.hide{transform:translateY(-110%)}
 details.tocw{border-bottom:1px solid var(--line);padding:.15rem 0}details.tocw>summary{cursor:pointer;padding:.6rem 0;color:var(--teal);font-size:1.02rem;list-style-position:inside}details.tocw[open]>summary{margin-bottom:.4rem}
 #tocBtn{flex:1 0 100%;padding:.85rem 1rem;font-size:1.08rem;font-weight:700;background:var(--accent);color:#1b1500;border-color:var(--accent);text-align:center}
 #totop{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:25;width:46px;height:46px;border-radius:50%;border:1px solid var(--gold2);background:var(--hd1);color:var(--gold);font-size:1.3rem;box-shadow:0 3px 12px rgba(0,0,0,.4)}
+details.kl{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:.2rem .8rem .6rem;margin:1rem 0}details.kl>summary{cursor:pointer;padding:.6rem 0;font-weight:700;color:var(--teal)}
+.chip{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.chip.drag{outline:2px solid var(--accent);transform:scale(1.07);box-shadow:0 4px 14px rgba(0,0,0,.35);position:relative;z-index:5}
+details.optd{margin:.8rem 0 .2rem}details.optd>summary{cursor:pointer;display:block;text-align:center;padding:.7rem 1rem;border-radius:8px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--fg);font-weight:700;list-style:none}details.optd>summary::-webkit-details-marker{display:none}
 main{padding-block:1.4rem 4rem}
 h2{font:700 1.25rem/1.3 var(--f-display);color:var(--teal);margin:0 0 .3rem;text-wrap:balance}
 .lead{color:var(--muted);margin:0 0 1rem;max-width:62ch}
@@ -184,11 +187,8 @@ mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor
     <div class="brand"><img src="data:image/webp;base64,UklGRqwUAABXRUJQVlA4IKAUAABQQwCdASpgAGAAPjkWh0MiIQx2/74QAcJbACdMpxAZ8h5jtcfzHkW43en/I76S853+D9R3569gjxxvVX+4PqG/Zv9r/d3/3/7b+6P/OfYB8gH9L/1HrWf9X2I/209gj9WfTa/dz4UP71/0v3S9qj//4IJv47RvMP8T+P/tH5IfvT/pviRwP+Wfq/++/rHqF/H/sH+B/vv7U/1b90vjD/Z+CPvU/wPyS+AL8Z/l39r/sf7Vf3P9wPo096/yXboWI9Av2J+of4L+5fs7/Zv3a9jr/J/Jn3P+sH+W/MX6Av5b/R/8d+Y/9z+Zv8V/h/HD7+/3P2zfYJ/LP6l/of7V+5f+h+mf+f/6H+G/K72+/of91/4v+O/d3/IfYR/KP6L/oP71/i/+3/iP///5fus9hP7Vey9+ti4N9xtnVHP0az73/dGCO8nXXsB/4SXCjytAGhPIKYNr3SJkODja6K/F6Rtppl2cdPN0c8Xm6Y12cVqccqAaI4s2iTwnXZzvbfeU2Y3Xk50EeoJRtcb00Y/Pj3aDbm/9g/r03EQ1zWAOZH1DlqI2RXBt7rM06HDnA8DWQA8xWKFnPXBQd9H2yv8tSvNH+jxZ8Hgn24n/BYgVMPSIPENU+TxK9x8RGJ5vt2Dhbc+T8f81xr1vrIWhnA0zN5eTSP+yxrvdM4PJ9lwN4mwk26X8TZrLfw8is9ZNHTnF2C91vn536KcdmpXwNy6plZSUgbQAAP7/64XHdYoZcWRjH8D+PIYyU2gLey+wgrmhuOVmsOsnTFV+z51Ds5IsE2vhwKZJw0+VqWEeshWgdo++ijNZKtvPK5poOTHoVJrDk4VjyugI9S/WEzDwaQMgt5tYW3J1Qht/T0A0pimx//R2SiJhb/Rm0N0dFf1czdsBI2Gy15yWcMqtgFW5BJ4afU6gKYeT+RcPIbFkdp/PJJ8IMt052zNo5FvDeIzqJv0ZIIQQgM4cfjXxRLxFUcZ1Qalu8kr38e5v/jEScCWwNcFz/aNAGb5HSvdAc5UcRrrX6roUgqsle3LC0nSQcy+/mpsaYpL+ob37LujZAnEeDgnCiMVU5ZhksLrLI9oTcKPAxCCGcFqR+WXmlN9dfgxyc7mf6fffzmGVvewE8j8NXlGGefaRPpNSietN8aIvVGoQyXFrG9IfhcezZpUwAMzXqscDgTtidQ9MX6AxF2dK3FSf7muO0h0mR1/lcd/m03dSfTEMKMrRw02SQzdsDctpgXHCERBqrCm47no4vNGALwLf4RFI1gDq3G7va0hY7JpbIDj+/5E9sNTmJWq7/L7SDfwGIRNP5z+P6hyEGxFkPKUyTNcMZNAoTg4Pfx8taInos+IRyMvwUc5Kdg/aBTQfXx02Qa1HMBkirlbIWu7R+rplrHw4CP5Iy9Hfqg4wC7YWtVqw5j+nLSx4PINh+MgcXlSUhUbT5ld6o2GhR/C3pNyKkEa5GgsbS7gdECEBj5LE9HJpSiRxay728JP2W75o4tZoKFB+a31tJSUqgAXqpz8eovVPHlHEEAYs1yiDIemJ0IEyd4bgNOZ6PPN4FQYhdUhAjsodSUs02oqGtX6RvV2rf3MDr9Jr3KAEzIZvnY2/KJRwXH0dNBr7daQW0rFNkRAv8NyydZUF8BH8W2nQKWSqP6Aw1mr5EOpPdobVWVpaNJ/LoTMaiRwQ9aNChYFxGljcDEs+FNTKMghr5B4w6s39+bmUIKSjOgJs25PGp8wqX7OTQ1wdBpFrwKNigQxXWtHUbIaFKw36GTNbd9SkB4oUAvFK2t8KCLS/0bksuGwNRefr7kizEFO3NnlQ82zeqwIPKdTRIwoZV8B+d99WS5sJt74KVg/9ZUKInPA8D467IjH7ktE/5m2fPcin9QB9Clcc1j3/9ulWWmL3Or30QdBNn93pNfTBwInZNV7aZdf3fajijxFus254/bRv58xVosghjMvvl1SYd5Ohvez5AgX8JlAa5yLQEcWSBIfhqxTcPmdlGUs1U0ELf8WO421aLuVtHVZLSfnXvN6+QIx63SY+AVXl+xRdeah1GtuTWraBxb0V1e9pQIOLRkBpsYXl2MFNtA34lC4eNKM92/B1KUvbuZdWWuCH2nu6kXdasZIScYvFleJ4h/j+wnEEGfy9sWgjih1pPZOnHO7aVgFLLoutmeKWY27mWpu/1kcrr5YKIkFh1vC0tBiwjoffSpFdErnl6xok57ThSR0xFDUHjuJAn/i+qjY82u6APbWEZw2au4yXbpLT7b+yIEipyPjE1OJnJx5BdzFtKgkFM92EMxlWoEXqQOo5sODX11F2miv3OsBSIYzOAYpgQ0DxaAcvdGJqsb/d+Tut1IkQaCkPzQSJUyphAC77aiJsG24bWXgq0a8Wrp4tDsIdrP4F/nqpFwauMMZOVrmB4JSuybtMVJ5vmmui2mG29NshHnYXx83QlyXK+IgW7txQM+9ZTiazwQ5M4Kk1qY0H9UY4UJ9D74ffBmt96WQmGj/da0FMinmveBstFapIz19ns+ppMjIkrymua1A11GhMdcbAQC0Zimc8IDtKlzhRZBqtswttgIxXFQSukUbHkMNmQk7NnzxnrgmXIim2IqRwJ9ZGBNm/WmDHhRvFJ70YBfvVAQh1G8c3wQ2x/Bt3NztaEDSaGeEPJ0B/9IGDQD0scFPm8fB+zqj1KfZFxjKAXGnJ9dYU7J4rEWPxctdcov9kqE9Rn/sBnd7jW3RL0+QH6G1JK2HApyXIRs/XfrgwgcSn3w0S01GJU77Jc+JYtNqiy4uygpCu4bTYXGOI+0TQSCyoQVF7v0MBLjH1KdWS899tvd/NQBIwsu2/oeyab79Vanmv2PG9Y5SUeAZ58/mEp1Zb+ZgCJu6lUs9WqA4NwMyBSld7XqjGMhZWodRq6UTuJohph9koJJRgEguqeV0UZikZY0r4f6WXSqjSaDxvwDnX2aLRvTnTGI1M4FUeqtyWnpXj9PNMIh5fGeVVVTPCpUlv4uaBxiS0F2BDzB6bZh85pp2tntwUaneOeIs3qqdEIpxPNxKBcPZlbUOV2hQHOWUe4GigArcCLEu7qFlpNzfo4JVUZ+XisAsAqvHLyT0WE12719vNz4uUKbaiD/E8pxCym/DVulLOoxEnmNSCZPhTmDHWULVopIgjc3MMZ9NE2+3+PvbJEZyWVtpserAW5bQbHEjpU+2LoD9P8f95Spge9ypcM9A/sU9swxTeXMM2bxZXDVACmYDwF+Q0Z0HJY4yEAyUVKVOgQNsasyh4IHglj2zqnMf3UK0UO/KbLy8poFjrRpJ5Tx+XIC8YqOP1xNKvxPphdCxUs/O6/xOuScmuGQp9rz9vPIgrombHISQvRv6u9H1EE/hcGuVEdRzhuLRhO65i8Jep+Pvbx32j6THo9clm9JgCTykkH6UzWfgpgk1ZjHxy9bgiS5ma/CYUwFaK6wGmriMFTZpR7dqYmCFHDHGYat56/XMH1EhON/OFmUwR1/SOkYr1zXv5qL0E/vEpYkymnUfxHEJ8ke48T1Nyi1+fv3Xo0YSRc6Lh8RrpGt6zaQ1Et9RPLITLmfdC+40vgpFViwcRDxEjh4M4ljkiUGZZgx6fJFrJQgf95b2uKEruKzJmmYtHZGThDg953GmyCTYtTNqWZGDd178jSJs2abpZvb80C0zxY6VLqXrvlKEK07ongK73eel/n9a1ziCltPaDfkebi1dU/gjdiMrhXYJ/D/rMY/N1+SgsFbJHQixr44RvgFdja+ohI1EsP9MXeuWVvmMZuLGiko6hUIz9sfIxCGBO9Dg1R2cn6UOS8ZFcPEnhlz7BEuDfeAArJayp6G6KT+7UEOb7TvOQnWvq95UVjrtm9HUhzublGJnRUIZwDDvU3geDI6SDypQfKnvrZrLZaZEKKsLkXOpZFqfXwWn0eKhfayS19EjEJSGt7msKmvx+qRb/KTWQQwIjzPfkRpEGCEPE9GbSMSp6pqUG1YZy7zFQNBdOsk6qE7M7PtEZxiDKZN4iYan+PA36B+pj+UTsQqVgIWAtFUHOXpKRYPvbZoFMe6uuCk6Z8ewC2wGkyRlpngYBPMmTcsR4wKdB5xFLv//94ztBym3njzIOXPrdJYWanLaJKTPIy6EvUR2BFJhwgkh7FI89WD6U/YGQPn6fLtlyoLsQv4a0Qt48WIy259jMFmTyHHXtNK/6//jq442a7IDwdIRMViLFSrmDrPRFxTjC2iNe+UpOdTkl/kbxoXIcLmrA/k87xcIVM1srMb1l5gnk+tvmJZj3PySi2PPioXYV2foUXXwnfypuqgRKo6DKyzC5fDPmZ7jlpsD9ZNTaZcdyO1a3y1ivmNEFayVKCvoQB2HBZ2Tr+WFx5kR51/lvyiuHh3qS7PlYsWYgTbEuvcjSUStx5Y5W3CN7F+285GXlmeX2tMAYW+psIU5JIrEGhRJNntr5jI0T8TQdusX1QyexUSuAjCx7qTZrv2x2IUodEWyku80W4t6nOpuaCcUXDwXbQj+rHxAUpeYhhrAqtiC/whVK/nA1rxLHGxCq0mQXBNYupBVvK58b57TurF1MbYoOHM1lTpY5AMP1RZryAxdNUtWpOwZyNoVAWIbfp2X3VKR7oDKGJQURHGU4nrjOS+sKrou7A+01taZNjhXBCaVS4eYCO5Xr0SH41NoRBSGfiKzqpNew1YRJlEDgYJSZNsTUcx5ZcVRQ9YmHVYrEPbfQIqyCAKRoj0GIzBgyz1ktGADlCEItgO4RSEuowYXFy9Z8gvXFB+iFGQDsFCBxeuDyhJp1lCRffSNz3J4O5x14/hjLP/VuSAmGUHdOmOawaVabLXxYgLpFW31BHDT183hZrKddA/37SiYHhuC40LsUsxlcluCmwz4074Cp31haqRt4OO9eLoEHlVIcbaAr0xELPfp2tD/tjIO3jACir95GfkA4owzokYThG4zEjSM58jnFXMoQzbnxDsPlPphStxgl1aM+TWD3PXC047aguRTK4MdpP2rvFX3GBA95iBFcXQRsu+jf4JBeCSrH5RszVp7m9uiLJ69iUyEwR+L9Uf10BykFNn+2yW8cRO6MUDaHYDdFIkNbl4EKC8GXL5bHLp1KUSB7woxYHyLaaDG5UYCMsbYou4NDxttu3gcIvwX+1aQqwqH6Er9uq4SQZfqA2CF0LMPCgp2EmOp0qAfGzmfiIBtLQ7wY9bYqvmhVA5AyzQa6NHG4e5/B5BfR8PDx22Ja395sC2fwEgBSsqCDtehNGF2wd/J4VqqwiU3GdaV2gE5eOkj1vlVELezGAoYSZmG0k23yFqmv+SB/J9gYhEE7qrpmmMCemoDdNUC/iBVvdxaQkMITCKtVA6K098XwI/LDZSBrOaGGJ8+L1SW6hbXXqTK1O/zJKJQbLyL1nIxvgdNVtIkb8n38F7TDnmLz2WxNeohSuUGEq7D4OCYo+CA50bEB1FusH+eU/vopK2s0CbSJgtytFHjDQ1QhXil9xu3TifQFvLnrky7PYrwqxTpUdjtPCX53xqLd64dh53b6jxXvI8xjomFG/xWO3hcy4Hj4x53xFjBV4aLeUbUWj2gm6omNTz69OF6oECP2FMWRUvXWmXob2a0O8R9DwRMeDzDlrxqEf+xC7UNd4gWa8w6+lt0Z4th0BhAoro28neLQMQWtP2W7wTzhLXKIm4glJh0x4/oQD52Wk0uVncouA2jzcB3FXko48do/+xnxZ7wUX5sAAaVnVBD/XOemgvVuSU/zhCQfXAtehJkEEPRILwzsrK9nXq7VLvdpAQfFUO3x54E+xEFOrlogBtTTurEmK6452KPqFV8kjz3amVSlJv+lO0dH29+e9gXM6y5mV7UNH90Nfcb5N4VMH7UO1e4IopkQV0l2sj0KpQD2e1zl0cAFv1B4QnXeimfwIiHob6JlQmutT/ut7uodbK3HJ4tRjZT7yiDOmYtisTI2G4+VKGpn/ZK64amJsfgJKWtuSJ4BZTh58FsfHvgESE7Qxt/ThiD5ugarUH9TqTgSBrRTnWVuKV879SraTCEiS3/GFoOZhWzyw+H30jjyahZu0lzUKzLmWfPgniQ5ChMWlEsDRdjaEiDPooUxefssACpRc1uLRcffj7VO5Qa1QgwJ23hQgDEBsTfCuluQJ16eF0Kh0A/62su6louLw6HxWdVUUWVvZcIv+cH9Sya8V2O19Wt3ipjoL+jxRwWxVaYHWw/NQwf5nYy73Kx4/teG0/APYi4P4xNgzgzRX/IkWobT9fObjb9MlEE3Y3zkG7UPA6KxPp1VNmJ9DQrks7Fl6Tm3+cNCbsDzCXuh3ZK1+WbPsrdWBp97x3Oo/ljZZfP25tfHWKbLUl6nqizQfu0ftcp3l680dCMnfPAHI7J6ZftbV0LFMAb77/NQzcyOxWrUY7TAgC/5xb6tOcOprrCqfX614h1fHIwe9F0M0lW+DXIbpyyQV5+1pGrqJ3RCK46LqWrFTnOoUFzWkxaiyQn6NL5Mybz4WHnTtd7MMAxHdveZzJcK7PN8jUpOg/WGEmRzvsfZdVdWmVhqXg11NOKYf7PuS6saG5yG7wkK92rIRQnwPWz6oPaOFcnLCQODxmKLJO8uQViCPHQlh08jjx3tvTRL31YRREDVRAgfX0uu1dA9u1Wtrm+wdj/DTliC2mtlOPd0zMZtzP6e9PMzlOkJEHMxrKb8B4lO++XEnMGJFWRYynQNoG4Hy1hZe4z7XA1Gp2we5YMTmIQZGMieKBWprQjzo4qT8ipCjb3NiqaTMDsQln91Wx2p7OJBQXSuuZ61m1nwPAGPzHGn+TzXYYS9jh4XZWZw1lP5QH8an14hOSNRH9SMXAl0iYA5a8qowN4fLn4Wu/jOrldllhPgcYbyPqOKijEAbFkAfR5ZIxc0F9oZnqKNYZOtnkjYh+h/FG/E3e+g9Me5TdGF8JSHUUrLl4jnNvpBV0XF2wuYmw2SpvxCGW/KDDnp4gf6cG8hUwSharzgdhhsgEeIIfzLb3rfiZA63NLuTy/CjEgUJ8UVr+uNraAGjyn0Ndte+C2PrRYid/H0RnuaToI34c/v5HSLb4s1vWwAAAA=" alt="" width="46" height="46"><div><b>Homöopathie</b><span>Nachschlagewerk</span></div></div>
     <nav id="tabs" role="tablist" aria-label="Bereiche">
       <button role="tab" data-v="suchen">Suchen</button>
-      <button role="tab" data-v="arz">Arzneien</button>
-      <button role="tab" data-v="klinik">Klinik</button>
       <button role="tab" data-v="lesen">Lesen</button>
       <button role="tab" data-v="merkliste">Merkliste<span class="count" id="bmCount"></span></button>
-      <button role="tab" data-v="schreibweisen">Schreibweisen</button>
     </nav>
   </div>
 </header>
@@ -196,19 +196,22 @@ mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor
 <main class="wrap">
   <section id="v-suchen">
     <h2>In allen Werken suchen</h2>
-    <p class="lead">Geben Sie ein Wort in heutiger Schreibweise ein. Die Suche findet auch die alten Formen, zum Beispiel „Arznei“ und „Arzney“ oder „Teil“ und „Theil“.</p>
+    <p class="lead">Ein Suchfeld für alles: Arzneien, Beschwerden und Begriffe. Alte Schreibweisen, Fachwörter und gleichbedeutende Wörter werden mitgefunden (zum Beispiel „Nasenbluten“ und „Epistaxis“).</p>
     <div class="searchbox"><input id="q" type="search" enterkeyhint="search" placeholder="Suchwort, z. B. Lebenskraft" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Suchbegriff"></div>
+    <details class="optd"><summary>📚 Literaturauswahl und Optionen</summary>
     <div class="opts">
       <label><input type="checkbox" id="equiv" checked> Alte und neue Schreibweise gleichsetzen</label>
-      <div class="lit"><span class="litl">Literatur <small>(Mehrfachauswahl, ohne Auswahl alle)</small></span>
+      <div class="lit"><span class="litl">Literatur <small>(Mehrfachauswahl. Gedrückt halten und verschieben ändert die Reihenfolge der Ergebnisse.)</small></span>
         <div class="chips" id="scope" role="group" aria-label="Literatur"></div></div>
       <label>Bereich bei Boericke
         <select id="region"><option value="">Alle Abschnitte</option></select></label>
       <label>Reihenfolge
         <select id="sort"><option value="hits">Meiste Treffer zuerst</option><option value="book">Wie im Buch</option></select></label>
     </div>
+    </details>
     <p class="hint">Mehrere Wörter müssen im selben Abschnitt vorkommen. In Anführungszeichen („Reine Arznei“) suchen Sie eine feste Wortfolge.</p>
     <div id="variants"></div>
+    <div id="kres" aria-live="polite"></div>
     <div id="results" aria-live="polite"></div>
   </section>
 
@@ -226,7 +229,7 @@ mark.hlu{background:#f5d96b;color:#241a00;border-radius:3px;padding:0 1px;cursor
     <p class="lead">Geben Sie eine Beschwerde ein, zum Beispiel „Asthma“, und Sie sehen alle Arzneien, bei denen Clarke sie nennt. Geben Sie eine Arznei ein, auch als Abkürzung wie „lyc“, und Sie sehen ihre Beschwerden.</p>
     <div class="searchbox"><input id="kq" type="search" enterkeyhint="search" placeholder="Beschwerde oder Arznei" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Beschwerde oder Arznei"></div>
     <div class="chips" id="kex"></div>
-    <div id="kres" aria-live="polite"></div>
+    <div id="kres0" aria-live="polite"></div>
   </section>
 
   <button id="totop" aria-label="Nach oben zum Menü" hidden>▲</button>
@@ -462,6 +465,7 @@ var SYN=[
 ["Homöopathie","Homöopathik","Homoeopathie","Homöopathisch"]
 ];
 
+SYN=SYN.concat([["Nasenbluten", "Nasenblutung", "Epistaxis", "Nasenblut", "Bluten aus der Nase", "Blutfluss aus der Nase", "Nasen-Bluten"], ["Schlaflosigkeit", "schlaflos", "Agrypnie", "Insomnie", "Insomnia", "Nicht schlafen können", "Schlafmangel"], ["Durchfall", "Durchfälle", "Diarrhoe", "Diarrhö", "Diarrhöe", "Diarrhea", "Durchlauf", "Laxieren", "Flüssiger Stuhl", "Dünner Stuhl"], ["Verstopfung", "Obstipation", "Stuhlverhaltung", "Leibesverstopfung", "Hartleibigkeit", "Stuhlverstopfung", "Constipation"], ["Erbrechen", "Emesis", "Vomitus", "Erbrechen von Speisen"], ["Übelkeit", "Nausea", "Brecherlichkeit", "Uebelkeit", "Übelkeiten"], ["Kopfschmerz", "Kopfschmerzen", "Kopfweh", "Cephalalgie", "Kopfwehe", "Kopfleiden"], ["Migräne", "Migraene", "Hemikranie", "Halbseitiger Kopfschmerz"], ["Husten", "Tussis", "Hüsteln"], ["Bluthusten", "Hämoptoe", "Haemoptoe", "Haemoptysis", "Hämoptyse", "Blutspeien", "Blutauswurf"], ["Bluterbrechen", "Hämatemesis", "Haematemesis", "Blutbrechen"], ["Schwindel", "Vertigo", "Schwindelanfälle", "Schwindligkeit", "Drehschwindel"], ["Ohnmacht", "Synkope", "Bewusstlosigkeit", "Besinnungslosigkeit", "Ohnmachten", "Ohnmächtig"], ["Fieber", "Febris", "Fieberhitze", "Fieberanfall"], ["Schüttelfrost", "Frostschauder", "Fieberfrost", "Schauder"], ["Schweiß", "Schweiss", "Hidrosis", "Transpiration", "Nachtschweiß", "Nachtschweiss"], ["Sodbrennen", "Pyrosis", "Saures Aufstoßen", "Saures Aufstossen"], ["Aufstoßen", "Aufstossen", "Rülpsen", "Ructus"], ["Blähungen", "Blähung", "Flatulenz", "Flatus", "Blähsucht"], ["Zahnschmerz", "Zahnschmerzen", "Zahnweh", "Odontalgie", "Zahnwehe"], ["Ohrenschmerz", "Ohrenschmerzen", "Ohrenweh", "Otalgie", "Ohrenzwang"], ["Schnupfen", "Coryza", "Rhinitis", "Nasenkatarrh", "Stockschnupfen"], ["Halsentzündung", "Halsweh", "Rachenentzündung", "Pharyngitis", "Halsschmerzen", "Angina"], ["Hautausschlag", "Hautausschläge", "Exanthem", "Ausschlag", "Eruption", "Eruptionen"], ["Juckreiz", "Pruritus", "Hautjucken", "Jucken"], ["Wassersucht", "Hydrops", "Ödem", "Oedem", "Ascites"], ["Gelbsucht", "Ikterus", "Icterus", "Gallsucht"], ["Harnverhaltung", "Ischurie", "Urinverhaltung"], ["Harnzwang", "Strangurie", "Blasenzwang", "Harndrang"], ["Bettnässen", "Enuresis", "Einnässen", "Bettpissen"], ["Gicht", "Podagra", "Chiragra", "Gichtleiden"], ["Rheumatismus", "Rheuma", "Rheumatisch", "Gliederreißen", "Gliederreissen"], ["Krampf", "Krämpfe", "Spasmus", "Spasmen", "Konvulsionen", "Convulsionen"], ["Epilepsie", "Fallsucht", "Epileptisch", "Fallende Sucht"], ["Lähmung", "Lähmungen", "Paralyse", "Paralysis"], ["Schlagfluss", "Apoplexie", "Schlaganfall", "Hirnschlag"], ["Hämorrhoiden", "Haemorrhoiden", "Hämorriden", "Goldader", "Afterblutknoten", "Blutknoten", "Goldaderfluss"], ["Atemnot", "Asthma", "Engbrüstigkeit", "Dyspnoe", "Kurzatmigkeit", "Kurzäthmigkeit", "Brustbeklemmung", "Beengung der Brust"], ["Herzklopfen", "Palpitation", "Palpitatio", "Herzpochen"], ["Lungenentzündung", "Pneumonie", "Pneumonia"], ["Brustfellentzündung", "Pleuritis", "Rippenfellentzündung"], ["Entzündung", "Inflammation", "Phlogose"], ["Geschwür", "Geschwüre", "Ulcus", "Ulcera", "Schwär"], ["Abszess", "Abscess", "Eiterbeule", "Apostem", "Eitergeschwulst"], ["Krebs", "Karzinom", "Carcinom", "Carcinoma", "Cancer"], ["Weißfluss", "Weissfluss", "Leukorrhoe", "Leukorrhö", "Fluor albus", "Weißer Fluss"], ["Menstruation", "Monatsfluss", "Menses", "Monatliche Reinigung", "Katamenien", "Monatsblutung"], ["Amenorrhoe", "Amenorrhö", "Amenorrhea", "Unterdrückte Regel"], ["Schwangerschaft", "Gravidität", "Graviditas"], ["Geburt", "Entbindung", "Niederkunft", "Partus", "Geburtswehen"], ["Milchmangel", "Agalaktie", "Agalactie"], ["Neuralgie", "Neuralgien", "Nervenschmerz", "Nervenschmerzen"], ["Ischias", "Ischialgie", "Hüftweh", "Hüftschmerz"], ["Rückenschmerz", "Rückenschmerzen", "Rückenweh", "Lumbago", "Hexenschuss", "Kreuzschmerz", "Kreuzschmerzen", "Kreuzweh"], ["Augenentzündung", "Ophthalmie", "Ophthalmia", "Bindehautentzündung", "Konjunktivitis"], ["Grauer Star", "Katarakt", "Cataracta"], ["Schielen", "Strabismus"], ["Taubheit", "Schwerhörigkeit", "Gehörlosigkeit", "Surditas", "Harthörigkeit"], ["Ohrensausen", "Tinnitus", "Ohrenklingen", "Ohrenbrausen", "Sausen in den Ohren"], ["Heiserkeit", "Raucedo", "Stimmlosigkeit"], ["Keuchhusten", "Pertussis", "Stickhusten", "Kinkhusten"], ["Masern", "Morbilli"], ["Scharlach", "Scarlatina", "Scharlachfieber"], ["Pocken", "Variola", "Blattern"], ["Windpocken", "Varizellen", "Varicellen"], ["Diphtherie", "Diphtheritis", "Häutige Bräune", "Croup", "Krupp"], ["Typhus", "Nervenfieber", "Typhös", "Faulfieber"], ["Wechselfieber", "Malaria", "Intermittens", "Sumpffieber"], ["Cholera", "Brechruhr"], ["Ruhr", "Dysenterie", "Dysenteria", "Blutruhr"], ["Schwindsucht", "Lungenschwindsucht", "Phthisis", "Tuberkulose", "Tuberculose", "Lungensucht", "Auszehrung"], ["Abmagerung", "Marasmus", "Atrophie", "Abzehrung"], ["Skrofeln", "Skrophulose", "Scrofulose", "Skrofulose", "Drüsenkrankheit"], ["Rachitis", "Englische Krankheit", "Rhachitis"], ["Warzen", "Warze", "Verrucae"], ["Hühneraugen", "Leichdorn", "Clavus"], ["Frostbeulen", "Pernio", "Perniones"], ["Verbrennung", "Verbrennungen", "Brandwunden", "Combustio"], ["Wunde", "Wunden", "Verwundung", "Verletzung", "Verletzungen"], ["Quetschung", "Quetschungen", "Kontusion", "Contusion", "Prellung"], ["Knochenbruch", "Knochenbrüche", "Fraktur", "Beinbruch"], ["Verstauchung", "Distorsion", "Verrenkung", "Luxation"], ["Vergiftung", "Intoxikation"], ["Kolik", "Leibschmerzen", "Bauchweh", "Bauchschmerzen", "Bauchschmerz", "Leibweh", "Leibschneiden", "Bauchgrimmen", "Grimmen"], ["Magenschmerz", "Magenschmerzen", "Magenweh", "Gastralgie", "Magenkrampf", "Cardialgie"], ["Magenentzündung", "Gastritis"], ["Appetitlosigkeit", "Anorexie", "Appetitmangel", "Anorexia"], ["Heißhunger", "Heisshunger", "Bulimie", "Fresssucht"], ["Gedächtnisschwäche", "Vergesslichkeit", "Gedächtnismangel", "Amnesie", "Gedächtnisverlust", "Gedächtnissschwäche", "Gedächtnissmangel"], ["Traurigkeit", "Melancholie", "Schwermut", "Niedergeschlagenheit", "Depression", "Trübsinn", "Gemüthsverstimmung"], ["Angst", "Ängstlichkeit", "Aengstlichkeit", "Beängstigung", "Beängstigungen"], ["Reizbarkeit", "Gereiztheit", "Reizbar", "Irritabilität"], ["Wahnsinn", "Geisteskrankheit", "Irrsinn", "Tobsucht", "Manie", "Geistesstörung"], ["Delirium", "Fieberwahn", "Irrereden", "Phantasiren"], ["Müdigkeit", "Mattigkeit", "Abgeschlagenheit", "Erschöpfung", "Ermüdung", "Kraftlosigkeit"], ["Zittern", "Tremor", "Zitterbewegung"], ["Gefühllosigkeit", "Pelzigkeit", "Taubsein", "Eingeschlafenheit"], ["Blutarmut", "Anämie", "Anaemie", "Bleichsucht", "Chlorose", "Blutmangel"], ["Blutung", "Blutungen", "Hämorrhagie", "Haemorrhagie", "Blutfluss"], ["Nierenentzündung", "Nephritis", "Nierenleiden"], ["Blasenentzündung", "Zystitis", "Cystitis", "Blasenkatarrh"], ["Nierenstein", "Nierensteine", "Nierenkolik", "Nierengries", "Blasenstein", "Steinleiden", "Lithiasis", "Gries"], ["Gallenstein", "Gallensteine", "Gallenkolik", "Cholelithiasis"], ["Leberentzündung", "Hepatitis", "Leberleiden", "Leberkrankheit"], ["Mandelentzündung", "Tonsillitis", "Halsmandeln"], ["Zahnen", "Dentition", "Zahnungsbeschwerden", "Zahndurchbruch"], ["Hernie", "Leistenbruch", "Eingeweidebruch", "Nabelbruch"], ["Krampfadern", "Varizen", "Varicen", "Aderknoten", "Venenerweiterung"], ["Kopfgrind", "Milchschorf", "Grind", "Schorf", "Crusta lactea"], ["Flechte", "Flechten", "Herpes", "Ekzem", "Eczem", "Salzfluss"], ["Nesselausschlag", "Urticaria", "Nesselsucht", "Nesselfieber", "Quaddeln"], ["Rotlauf", "Erysipel", "Erysipelas", "Wundrose"], ["Furunkel", "Blutschwär", "Blutschwaer", "Furunculus"], ["Akne", "Acne", "Finnen", "Gesichtsfinnen", "Mitesser"], ["Haarausfall", "Alopezie", "Alopecie", "Kahlheit"], ["Schlafwandeln", "Somnambulismus", "Nachtwandeln"], ["Zähneknirschen", "Bruxismus"], ["Stottern", "Stammeln", "Sprachfehler", "Balbuties"]]);
 function headW(l){return wordsOf(String(l).split(/[.,;:(\u2013\u2014]/)[0])}
 function wordsOf(e){return (e.match(new RegExp(WORD,"g"))||[]).map(norm)}
 (function(){
@@ -506,7 +510,7 @@ function matchSynPhrase(toks,words){
   return res;
 }
 
-var VIEWS=["suchen","arz","klinik","lesen","merkliste","schreibweisen"];
+var VIEWS=["suchen","lesen","merkliste","schreibweisen"];
 var CH=120;
 var S={q:"Arznei",equiv:true,syn:true,region:"",expanded:"",scope:[],sort:"hits",variant:null,shown:30,hl:false,
   cur:lsGet("hn.cur",{w:0,s:3}),chunk:0,focus:0,fs:lsGet("hn.fs",1),bm:lsGet("hn.bm",[]),terms:[],results:null,variantList:[],any:null};
@@ -665,8 +669,9 @@ function run(){
   var rkf=null;
   if(terms.length===1&&terms[0].raw.length){var t0=terms[0];rkf=nameRankFn(t0.raw,S.syn?findGroups(t0.raw):{groups:[]})}
   results.forEach(function(r){r.rk=(rkf&&!r.sec.m)?rkf(headW(r.sec.label)):9});
-  if(S.sort==="hits")results.sort(function(a,b){return a.rk-b.rk||b.n-a.n||a.sec.gid-b.sec.gid});
-  else results.sort(function(a,b){return a.rk-b.rk||a.sec.gid-b.sec.gid});
+  results.forEach(function(r){r.wr=wRank(r.sec)});
+  if(S.sort==="hits")results.sort(function(a,b){return a.rk-b.rk||a.wr-b.wr||b.n-a.n||a.sec.gid-b.sec.gid});
+  else results.sort(function(a,b){return a.rk-b.rk||a.wr-b.wr||a.sec.gid-b.sec.gid});
   S.results=results;
   if(terms.length===1&&terms[0].all){
     S.variantList=terms[0].all.map(function(id){return [VL[id],VF[id]]}).sort(function(a,b){return b[1]-a[1]});
@@ -736,7 +741,7 @@ function renderResults(){
   box.innerHTML=html;
 }
 var timer=null;
-function doSearch(){S.shown=30;run();renderResults()}
+function doSearch(){S.shown=30;run();renderResults();KS.q=S.q;KS.shown=8;kSearch()}
 
 /* Lesen */
 function boPair(sec){var o=WORKS[sec.w===3?4:3].sections;for(var i=0;i<o.length;i++)if(o[i].key===sec.key)return i;return -1}
@@ -1044,7 +1049,7 @@ function kSearch(){
   var q=KS.q.trim(),box=$("#kres");
   var raw=q.match(new RegExp(WORD,"g"))||[];
   raw=raw.filter(function(w){return norm(w).length>=2});
-  if(!raw.length){box.innerHTML='<div class="empty">Tippen Sie eine Beschwerde oder eine Arznei ein. Das Verzeichnis enthält '+CL.length+' Arzneien und '+KI.length+' Beschwerden.</div>';return}
+  if(!raw.length){box.innerHTML="";return}
   var terms=raw.map(norm),html="";
   /* Arzneien nach Namen */
   var fg=findGroups(raw),names=CL.filter(function(r){return kName(r,raw,fg)});
@@ -1059,18 +1064,21 @@ function kSearch(){
     if(names.length>6)html+='<p class="hint">und '+(names.length-6)+' weitere. Geben Sie mehr vom Namen ein, um einzugrenzen.</p>';
   }
   /* Arzneien nach Beschwerden */
-  var full=(1<<terms.length)-1,mask={},hits={};
-  if(terms.length<=20&&!(fg.exact.length&&names.length)){
+  var mask={},hits={},cands=[terms.slice()];
+  if(terms.length===1&&fg.exact.length){
+    fg.exact.forEach(function(gi){SYNG[gi].forEach(function(e){if(e.words.length&&!(e.words.length===1&&e.words[0].length<5)&&!(e.words.length===1&&e.words[0]===terms[0]))cands.push(e.words)})});
+    cands.slice(1).forEach(function(c){c.forEach(function(w){if(terms.indexOf(w)<0)terms.push(w)})});
+  }
+  if(!(fg.exact.length&&names.length)){
     for(var i=0;i<KIN.length;i++){
-      var m=0;
-      for(var t=0;t<terms.length;t++)if(KIN[i].indexOf(terms[t])>-1)m|=(1<<t);
-      if(m){var ri=KIR[i];mask[ri]=(mask[ri]||0)|m;(hits[ri]||(hits[ri]=[])).push(i)}
+      var okc=false;
+      for(var ci=0;ci<cands.length&&!okc;ci++){var cw=cands[ci],all=true;for(var t=0;t<cw.length;t++)if(KIN[i].indexOf(cw[t])<0){all=false;break}if(all)okc=true}
+      if(okc){var ri=KIR[i];mask[ri]=1;(hits[ri]||(hits[ri]=[])).push(i)}
     }
   }
-  var rids=Object.keys(mask).filter(function(ri){return mask[ri]===full}).map(Number);
+  var rids=Object.keys(mask).map(Number);
   rids.sort(function(a,b){return hits[b].length-hits[a].length||a-b});
   if(rids.length){
-    html+='<p class="sum">'+rids.length+(rids.length===1?" Arznei":" Arzneien")+' <span>mit der Beschwerde „'+esc(q)+'“</span></p>';
     rids.slice(0,KS.shown).forEach(function(ri){
       var r=CL[ri];
       html+='<div class="krow"><button class="rn" data-kq="'+esc(r.n)+'">'+esc(r.n)+'</button><span class="of">'+hits[ri].length+' von '+r.k.length+' Beschwerden</span><p>'+
@@ -1078,8 +1086,7 @@ function kSearch(){
     });
     if(rids.length>KS.shown)html+='<p style="margin-top:1rem"><button class="btn" id="kmore">Weitere '+Math.min(40,rids.length-KS.shown)+' anzeigen ('+(rids.length-KS.shown)+' übrig)</button></p>';
   }
-  if(!names.length&&!rids.length)html='<div class="empty">Nichts gefunden für „'+esc(q)+'“. Versuchen Sie einen kürzeren Wortstamm, zum Beispiel „kopfschmerz“.</div>';
-  box.innerHTML=html;
+  box.innerHTML=html?'<details class="kl" open><summary>Klinik-Verzeichnis (Clarke): '+(rids.length?rids.length+' Arzneien bei „'+esc(q)+'“':'Arznei „'+esc(q)+'“')+'</summary>'+html+'</details>':"";
 }
 function kRun(){KS.shown=40;kSearch()}
 
@@ -1129,13 +1136,54 @@ $("#q").addEventListener("input",function(e){S.q=e.target.value;S.variant=null;c
 $("#region").addEventListener("change",function(e){S.region=e.target.value;doSearch()});
 $("#equiv").addEventListener("change",function(e){S.equiv=e.target.checked;S.variant=null;doSearch()});
 var LIT=[["org","Hahnemann: Organon"],["chr","Hahnemann: Chron. Krankheiten"],["arz","Hahnemann: nur Arzneien (Bd. 2–5)"],["bo","Boericke"],["bog","Boger (englisch)"],["bgd","Boger (deutsch)"]];
+var ORD=lsGet("hn.ord",[]);
+function litAll(){
+  var a=LIT.concat(LIB.map(function(l){return [l.id,l.short]})),pos={};
+  ORD.forEach(function(k,i){pos[k]=i});
+  return a.map(function(x,i){return {x:x,k:pos[x[0]]===undefined?1000+i:pos[x[0]]}}).sort(function(p,q){return p.k-q.k}).map(function(p){return p.x});
+}
+function wRank(sec){
+  var c=sec.w===0?"org":sec.w===1?"chr":sec.w===2?"bo":sec.w===3?"bog":sec.w===4?"bgd":WORKS[sec.w].id;
+  var i=ORD.indexOf(c);if(i>-1)return i;
+  var all=litAll();for(var j=0;j<all.length;j++)if(all[j][0]===c)return 500+j;
+  return 999;
+}
 function renderLit(){
   $("#scope").innerHTML='<button class="chip" data-lit="" aria-pressed="'+(S.scope.length===0)+'">Alle</button>'+
-    LIT.map(function(l){return '<button class="chip" data-lit="'+l[0]+'" aria-pressed="'+(S.scope.indexOf(l[0])>-1)+'">'+esc(l[1])+'</button>'}).join("")+
-    LIB.map(function(l){var on=workIdx(l.id)>-1;return '<button class="chip" data-lit="'+l.id+'" aria-pressed="'+(S.scope.indexOf(l.id)>-1)+'">'+esc(l.short)+(on?"":' <small>⬇ '+l.mb+' MB</small>')+'</button>'}).join("")+
-    '<button class="chip" data-lit="clk">Clarke: Klinik ›</button>';
+    litAll().map(function(l){
+      var lb=LIB.filter(function(x){return x.id===l[0]})[0],on=!lb||workIdx(lb.id)>-1;
+      return '<button class="chip" data-lit="'+l[0]+'" aria-pressed="'+(S.scope.indexOf(l[0])>-1)+'">'+esc(l[1])+(on?"":' <small>⬇ '+lb.mb+' MB</small>')+'</button>'}).join("");
 }
 renderLit();
+/* Werke per Gedrückthalten und Verschieben umsortieren (wird gespeichert) */
+(function(){
+  var box=$("#scope"),timer=null,drag=null,sx=0,sy=0,just=false;
+  function chipOf(e){var c=e.target.closest(".chip[data-lit]");return c&&c.dataset.lit!==""?c:null}
+  box.addEventListener("contextmenu",function(e){if(e.target.closest(".chip"))e.preventDefault()});
+  box.addEventListener("pointerdown",function(e){
+    var c=chipOf(e);if(!c)return;sx=e.clientX;sy=e.clientY;
+    clearTimeout(timer);
+    timer=setTimeout(function(){drag=c;c.classList.add("drag");try{navigator.vibrate&&navigator.vibrate(25)}catch(x){}},450);
+  });
+  box.addEventListener("pointermove",function(e){
+    if(!drag){if(timer&&(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10)){clearTimeout(timer);timer=null}return}
+    var el=document.elementFromPoint(e.clientX,e.clientY),t=el&&el.closest?el.closest(".chip[data-lit]"):null;
+    if(!t||t===drag||t.dataset.lit==="")return;
+    var r=t.getBoundingClientRect(),before=(e.clientY<r.top+r.height/2)||(e.clientY<=r.bottom&&e.clientX<r.left+r.width/2);
+    if(before)box.insertBefore(drag,t);else box.insertBefore(drag,t.nextSibling);
+  });
+  box.addEventListener("touchmove",function(e){if(drag&&e.cancelable)e.preventDefault()},{passive:false});
+  function end(){
+    clearTimeout(timer);timer=null;
+    if(drag){
+      drag.classList.remove("drag");drag=null;just=true;setTimeout(function(){just=false},350);
+      ORD=[].slice.call(box.querySelectorAll(".chip[data-lit]")).map(function(c){return c.dataset.lit}).filter(function(k){return k!==""});
+      lsSet("hn.ord",ORD);renderLit();doSearch();
+    }
+  }
+  box.addEventListener("pointerup",end);box.addEventListener("pointercancel",end);
+  box.addEventListener("click",function(e){if(just){e.stopImmediatePropagation();e.preventDefault()}},true);
+})();
 $("#scope").addEventListener("click",function(e){
   var b=e.target.closest("[data-lit]");if(!b)return;var v=b.dataset.lit;
   if(v==="clk"){KS.q=$("#q").value.trim();$("#kq").value=KS.q;KS.shown=40;location.hash="klinik";window.scrollTo(0,0);return}
@@ -1196,7 +1244,7 @@ $("#reader").addEventListener("click",function(e){
   }
   if(t.id==="clearHl"){S.hl=false;renderReader()}
   if(t.id==="langSw"){var cs=curSec(),pi=boPair(cs);if(pi>-1)openSection(cs.w===3?4:3,pi,false);window.scrollTo(0,0)}
-  if(t.id==="toKlinik"){KS.q=curSec().label;$("#kq").value=KS.q;KS.shown=40;location.hash="klinik";window.scrollTo(0,0)}
+  if(t.id==="toKlinik"){var ql=curSec().label.split(/[.,;(]/)[0].trim();$("#q").value=ql;S.q=ql;S.variant=null;location.hash="suchen";doSearch();window.scrollTo(0,0)}
   if(t.id==="nextHit")nextHit();
   if(t.classList.contains("chprev")){S.chunk--;S.focus=S.chunk*CH;renderReader();window.scrollTo(0,0)}
   if(t.classList.contains("chnext")){S.chunk++;S.focus=S.chunk*CH;renderReader();window.scrollTo(0,0)}
@@ -1215,7 +1263,7 @@ var kt=null;
 $("#kq").addEventListener("input",function(e){KS.q=e.target.value;clearTimeout(kt);kt=setTimeout(kRun,160)});
 $("#kres").addEventListener("click",function(e){
   var t=e.target.closest("button");if(!t)return;
-  if(t.dataset.kq!==undefined){KS.q=t.dataset.kq;$("#kq").value=KS.q;kRun();window.scrollTo(0,0)}
+  if(t.dataset.kq!==undefined){$("#q").value=t.dataset.kq;S.q=t.dataset.kq;S.variant=null;if(location.hash!=="#suchen")location.hash="suchen";doSearch();window.scrollTo(0,0)}
   else if(t.dataset.kall!==undefined){KS.open[t.dataset.kall]=true;kSearch()}
   else if(t.dataset.ms!==undefined){var w=t.dataset.ms;$("#q").value=w;S.q=w;S.variant=null;location.hash="suchen";doSearch();window.scrollTo(0,0)}
   else if(t.dataset.bo!==undefined){openSection(2,+t.dataset.bo,false)}
@@ -1406,7 +1454,7 @@ document.getElementById("exFile").addEventListener("click",function(){var gs=gro
 try{if(window.HNAndroid&&HNAndroid.shareText)document.getElementById("exFile").hidden=true}catch(e){}
 renderEx();
 
-$("#foot").innerHTML="Eine Idee von <a href=\"https://autoknigge.de\" target=\"_blank\" rel=\"noopener\">autoknigge.de</a> · <a href=\"https://autoknigge.de/homoeopathie/datenschutz.html\" target=\"_blank\" rel=\"noopener\">Datenschutz</a> · <a href=\"https://autoknigge.de/impressum\" target=\"_blank\" rel=\"noopener\">Impressum</a><span id=\"adOpt\"></span>";
+$("#foot").innerHTML="Eine Idee von <a href=\"https://autoknigge.de\" target=\"_blank\" rel=\"noopener\">autoknigge.de</a> · <a href=\"https://autoknigge.de/homoeopathie/datenschutz.html\" target=\"_blank\" rel=\"noopener\">Datenschutz</a> · <a href=\"https://autoknigge.de/impressum\" target=\"_blank\" rel=\"noopener\">Impressum</a> · <a href=\"#schreibweisen\">Schreibweisen</a><span id=\"adOpt\"></span>";
 try{if(window.HNAndroid&&HNAndroid.privacyOptionsRequired&&HNAndroid.privacyOptionsRequired()){var ao=document.getElementById("adOpt");ao.innerHTML=' · <a href="#" id="adOptL">Werbe-Einstellungen</a>';document.getElementById("adOptL").addEventListener("click",function(e){e.preventDefault();HNAndroid.showPrivacyOptions()})}}catch(e){}
 show(hashView());
 renderResults();

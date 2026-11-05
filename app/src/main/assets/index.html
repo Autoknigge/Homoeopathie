@@ -668,9 +668,9 @@ function run(){
   var rkf=null;
   if(terms.length===1&&terms[0].raw.length){var t0=terms[0];rkf=nameRankFn(t0.raw,S.syn?findGroups(t0.raw):{groups:[]})}
   results.forEach(function(r){r.rk=(rkf&&!r.sec.m)?rkf(headW(r.sec.label)):9});
-  results.forEach(function(r){r.wr=wRank(r.sec)});
-  if(S.sort==="hits")results.sort(function(a,b){return a.rk-b.rk||a.wr-b.wr||b.n-a.n||a.sec.gid-b.sec.gid});
-  else results.sort(function(a,b){return a.rk-b.rk||a.wr-b.wr||a.sec.gid-b.sec.gid});
+  results.forEach(function(r){r.wr=wRank(r.sec);r.wc=r.rk===0?headW(r.sec.label).length:0});
+  if(S.sort==="hits")results.sort(function(a,b){return a.rk-b.rk||a.wc-b.wc||a.wr-b.wr||b.n-a.n||a.sec.gid-b.sec.gid});
+  else results.sort(function(a,b){return a.rk-b.rk||a.wc-b.wc||a.wr-b.wr||a.sec.gid-b.sec.gid});
   S.results=results;
   if(terms.length===1&&terms[0].all){
     S.variantList=terms[0].all.map(function(id){return [VL[id],VF[id]]}).sort(function(a,b){return b[1]-a[1]});
